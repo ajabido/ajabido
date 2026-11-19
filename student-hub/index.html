@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BlueReef Dive Center — Student Hub (Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b2540; --ink-soft:#3c5570; --paper:#f5f8fb; --card:#ffffff;
+  --line:#dbe4ee; --accent:#0e7c9d; --accent-deep:#053a52; --accent-soft:#e3f3f7;
+  --coral:#e0703f; --good:#1f9e6d; --good-soft:#e3f7ec; --warn:#c48a1f; --warn-soft:#fff2d6;
+  --bad:#c4432a; --bad-soft:#fbe4de; --neutral:#6b7788; --neutral-soft:#eceff3;
+  --shadow:0 1px 2px rgba(11,37,64,.06), 0 8px 24px -12px rgba(11,37,64,.18);
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#eaf1f8; --ink-soft:#a9bdd2; --paper:#081722; --card:#0e2333;
+    --line:#1c3548; --accent:#4fc4e6; --accent-deep:#8fe0f5; --accent-soft:#123243;
+    --coral:#f0895c; --good:#4cc999; --good-soft:#0f2c22; --warn:#e0b04c; --warn-soft:#2b2210;
+    --bad:#f0765c; --bad-soft:#301613; --neutral:#93a1b4; --neutral-soft:#182636;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eaf1f8; --ink-soft:#a9bdd2; --paper:#081722; --card:#0e2333;
+  --line:#1c3548; --accent:#4fc4e6; --accent-deep:#8fe0f5; --accent-soft:#123243;
+  --coral:#f0895c; --good:#4cc999; --good-soft:#0f2c22; --warn:#e0b04c; --warn-soft:#2b2210;
+  --bad:#f0765c; --bad-soft:#301613; --neutral:#93a1b4; --neutral-soft:#182636;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;}
+a{color:inherit;}
+.wrap{max-width:1260px; margin:0 auto; padding:0 20px 60px;}
+button, select, input, textarea{font-family:inherit;}
+
+header.hero{background:linear-gradient(160deg,var(--accent-deep),#0a5a78 55%, var(--accent) 130%); color:#eef8fb;
+  padding:calc(20px + env(safe-area-inset-top,0px)) 20px 20px; position:relative; overflow:hidden;}
+header.hero::before{content:""; position:absolute; inset:0; opacity:.16; pointer-events:none;
+  background-image:radial-gradient(circle at 15% 25%, #fff 0, transparent 40%), radial-gradient(circle at 85% 75%, #fff 0, transparent 45%);}
+.hero-inner{max-width:1260px; margin:0 auto; position:relative;}
+.brand-row{display:flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:space-between;}
+.brand-left{display:flex; align-items:center; gap:14px;}
+.logo-img{height:52px; width:auto; background:#fff; border-radius:10px; padding:6px 10px; box-shadow:var(--shadow);}
+.eyebrow{font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; opacity:.85; font-weight:600;}
+h1{font-size:clamp(24px,3.6vw,34px); margin:4px 0 2px; font-weight:600; line-height:1.1;}
+.hero-sub{opacity:.9; font-size:14.5px; max-width:640px; margin:4px 0 16px;}
+.staff-widget{display:flex; align-items:center; gap:8px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28); border-radius:12px; padding:8px 10px; backdrop-filter:blur(6px); position:relative;}
+.staff-widget label{font-size:11px; text-transform:uppercase; letter-spacing:.06em; opacity:.85;}
+.staff-widget select{background:rgba(255,255,255,.92); border:0; border-radius:8px; padding:6px 8px; font-size:13px; color:var(--accent-deep); min-width:120px;}
+.stat-row{display:flex; flex-wrap:wrap; gap:12px; margin-top:4px;}
+.stat{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22); border-radius:14px; padding:12px 16px; min-width:108px; backdrop-filter:blur(6px);}
+.stat b{display:block; font-size:20px; font-family:'Fraunces',serif; font-weight:600;}
+.stat span{font-size:10.5px; opacity:.85; text-transform:uppercase; letter-spacing:.05em;}
+
+.tabbar{display:flex; gap:6px; max-width:1260px; margin:14px auto 0; padding:0 20px; flex-wrap:wrap;}
+.tabbar button{background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); color:#eef8fb; border-radius:10px 10px 0 0; padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;}
+.tabbar button.active{background:var(--paper); color:var(--ink); border-color:var(--line); border-bottom-color:var(--paper);}
+
+.banner-stack{position:fixed; top:calc(14px + env(safe-area-inset-top,0px)); right:14px; z-index:80; display:flex; flex-direction:column; gap:8px; max-width:320px;}
+.banner{background:var(--ink); color:#fff; border-radius:10px; padding:10px 14px; font-size:13px; box-shadow:var(--shadow); animation:slidein .18s ease-out;}
+.banner.err{background:var(--bad);}
+.banner.ok{background:var(--good);}
+@keyframes slidein{from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:none;}}
+
+.panel{background:var(--card); border:1px solid var(--line); border-radius:0 16px 16px 16px; box-shadow:var(--shadow); padding:16px;}
+.controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+.search-box{flex:1 1 240px; display:flex; align-items:center; gap:8px; background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:9px 13px;}
+.search-box input{border:0; background:transparent; outline:none; color:var(--ink); font-size:14.5px; width:100%;}
+select, .btn{font-size:13.5px; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:10px; padding:9px 11px; cursor:pointer;}
+.btn{background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600;}
+.btn.ghost{background:transparent; color:var(--ink-soft); border-color:var(--line); font-weight:500;}
+.btn.good{background:var(--good); border-color:var(--good);}
+.btn.bad{background:var(--bad); border-color:var(--bad);}
+.btn:hover{filter:brightness(1.06);}
+.btn:disabled{opacity:.45; cursor:not-allowed;}
+.controls-row2{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; font-size:13px; color:var(--ink-soft);}
+.chip{border:1px solid var(--line); border-radius:999px; padding:6px 12px; cursor:pointer; user-select:none; background:var(--paper); white-space:nowrap;}
+.chip.active{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-deep); font-weight:600;}
+
+.table-wrap{margin-top:18px; background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:var(--shadow);}
+.count-bar{display:flex; justify-content:space-between; align-items:center; padding:12px 16px; font-size:13px; color:var(--ink-soft); border-bottom:1px solid var(--line); flex-wrap:wrap; gap:8px;}
+.grid{width:100%; overflow-x:auto;}
+table{width:100%; border-collapse:collapse; min-width:860px;}
+thead th{text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); padding:10px 14px; border-bottom:1px solid var(--line); white-space:nowrap; position:sticky; top:0; background:var(--card);}
+tbody tr{border-bottom:1px solid var(--line); cursor:pointer;}
+tbody tr:hover{background:var(--accent-soft);}
+tbody td{padding:11px 14px; font-size:13.8px; vertical-align:top;}
+.name-cell b{font-weight:600;}
+.sub{color:var(--ink-soft); font-size:12px; margin-top:2px;}
+.badges{display:flex; flex-wrap:wrap; gap:4px;}
+.badge{font-size:11px; padding:3px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent-deep); border:1px solid var(--line); white-space:nowrap;}
+.badge.lv7{background:#f4e3ff; color:#6a2fa8;} .badge.lv6{background:#ffe6e0; color:#b8451e;}
+.badge.lv55{background:#fff2d6; color:#8a5e0a;} .badge.lv5{background:#e0f2ff; color:#0e5f8a;}
+.badge.lv4{background:#e3f7ec; color:#177a4d;} .badge.lv3, .badge.lv2, .badge.lv1{background:#f1eee6; color:#7a6a3d;}
+.badge.dup{background:var(--warn-soft); color:var(--warn); border-color:var(--warn);}
+.badge.contacted{background:var(--good-soft); color:var(--good); border-color:var(--good);}
+.badge.new{background:var(--accent); color:#fff; border-color:var(--accent);}
+.badge.tr-TRUSTED{background:var(--good-soft); color:var(--good); border-color:var(--good);}
+.badge.tr-GAPS{background:var(--warn-soft); color:var(--warn); border-color:var(--warn);}
+.badge.tr-REVIEW{background:var(--bad-soft); color:var(--bad); border-color:var(--bad);}
+.badge.tr-HOLD{background:var(--neutral-soft); color:var(--neutral); border-color:var(--neutral);}
+.badge.verified{background:var(--good); color:#fff; border-color:var(--good);}
+.badge.merged{background:var(--neutral-soft); color:var(--neutral); border-color:var(--neutral); text-decoration:line-through;}
+.next-txt{font-size:12.5px; color:var(--ink-soft); max-width:190px;}
+.pager{display:flex; justify-content:center; align-items:center; gap:10px; padding:16px; font-size:13px; color:var(--ink-soft);}
+.pager button{border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:8px; padding:6px 12px; cursor:pointer;}
+.pager button:disabled{opacity:.4; cursor:default;}
+.empty{padding:50px 20px; text-align:center; color:var(--ink-soft);}
+
+.overlay{position:fixed; inset:0; background:rgba(5,20,33,.55); display:none; align-items:flex-start; justify-content:center; padding:40px 16px calc(40px + env(safe-area-inset-bottom,0px)); overflow-y:auto; z-index:70;}
+.overlay.show{display:flex;}
+.modal{background:var(--card); border-radius:18px; max-width:580px; width:100%; padding:26px; box-shadow:var(--shadow); border:1px solid var(--line);}
+.modal h2{margin:0 0 2px; font-size:22px;}
+.modal .sub{margin-bottom:16px;}
+.close-x{float:right; background:none; border:0; color:var(--ink-soft); font-size:20px; cursor:pointer; line-height:1;}
+.detail-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin:14px 0 18px; font-size:13.5px;}
+.detail-grid div span{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:2px;}
+.course-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+.course-list li{border:1px solid var(--line); border-radius:10px; padding:9px 12px; font-size:13.5px; background:var(--paper);}
+.next-box{margin-top:16px; background:var(--accent-soft); border:1px solid var(--accent); border-radius:12px; padding:12px 14px; font-size:13.5px; color:var(--accent-deep);}
+.dup-box{margin-top:12px; background:var(--warn-soft); border:1px solid var(--warn); border-radius:12px; padding:12px 14px; font-size:13px;}
+.dup-box ul{margin:6px 0 0; padding-left:0; list-style:none; display:flex; flex-direction:column; gap:6px;}
+.dup-box li{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;}
+.contact-box{margin-top:12px; border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+.contact-box.done{border-color:var(--good); background:var(--good-soft);}
+.verify-box{margin-top:12px; border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+.verify-box.done{border-color:var(--good); background:var(--good-soft);}
+.verify-row{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:5px 0; font-size:13px; border-bottom:1px dashed var(--line);}
+.verify-row:last-of-type{border-bottom:0;}
+.verify-row .opts{display:flex; gap:4px;}
+.verify-row .opts button{font-size:11.5px; padding:4px 9px; border-radius:7px; border:1px solid var(--line); background:var(--paper); cursor:pointer;}
+.verify-row .opts button.sel{background:var(--accent); color:#fff; border-color:var(--accent);}
+.modal-actions{display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;}
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0;}
+.form-grid .full{grid-column:1/-1;}
+.form-grid label{font-size:12px; color:var(--ink-soft); display:block; margin-bottom:4px;}
+.form-grid input, .form-grid select, .form-grid textarea{width:100%; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:9px; padding:8px 10px; font-size:13.5px;}
+.form-grid textarea{resize:vertical; min-height:56px;}
+.field-note{font-size:11.5px; color:var(--ink-soft); margin-top:12px;}
+
+.report-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;}
+.report-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:var(--shadow);}
+.report-card h3{margin:0 0 12px; font-size:15px;}
+.bar-row{display:flex; align-items:center; gap:8px; font-size:12.5px; margin:7px 0;}
+.bar-row .lbl{width:150px; flex-shrink:0; color:var(--ink-soft); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.bar-track{flex:1; background:var(--paper); border-radius:6px; height:16px; overflow:hidden; border:1px solid var(--line);}
+.bar-fill{height:100%; background:var(--accent); border-radius:6px 0 0 6px;}
+.bar-val{width:52px; text-align:right; font-weight:600; flex-shrink:0;}
+@media (max-width:900px){.report-grid{grid-template-columns:1fr;}}
+@media (max-width:640px){.detail-grid, .form-grid{grid-template-columns:1fr;} table{min-width:640px;} .bar-row .lbl{width:100px;}}
+footer{text-align:center; font-size:12px; color:var(--ink-soft); padding:26px 20px calc(26px + env(safe-area-inset-bottom,0px));}
+</style>
+</head>
+<body>
+
+<div class="banner-stack" id="bannerStack"></div>
+<div style="background:#fff6d6;color:#5c4400;border-bottom:1px solid #ecd27a;padding:8px 16px;font-size:13px;text-align:center">Demo version: all names, emails and phone numbers are invented. Edits and new students are saved in your browser only. <a href="#" onclick="resetDemoData();return false;" style="color:#5c4400;text-decoration:underline">Reset sample data</a></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="brand-row">
+      <div class="brand-left">
+        <svg class="logo-img" width="52" height="52" viewBox="0 0 52 52" role="img" aria-label="BlueReef Dive Center" style="padding:8px"><circle cx="26" cy="26" r="22" fill="#0b4f8a"/><path d="M8 28c6-6 10-6 14 0s8 6 14 0 6-4 8-4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M12 36c5-4 9-4 12 0s7 4 12 0" fill="none" stroke="#7cc4f4" stroke-width="3" stroke-linecap="round"/></svg>
+        <div>
+          <div class="eyebrow">Student Hub · Live Database</div>
+          <h1>BlueReef Dive Center Student Hub</h1>
+        </div>
+      </div>
+      <div class="staff-widget" id="staffWidget">
+        <label>Signed in as</label>
+        <select id="staffSelect"></select>
+        <button class="btn ghost" id="staffAddBtn" style="padding:6px 10px; font-size:12px;">+ New</button>
+      </div>
+    </div>
+    <p class="hero-sub">Every diver who's ever trained with us — searchable, sortable, and growing. Verify leads before you call, track follow-ups, and spot duplicates.</p>
+    <div class="stat-row" id="statRow"></div>
+  </div>
+  <div class="tabbar">
+    <button data-tab="students" class="active">Students</button>
+    <button data-tab="queue">Verification Queue</button>
+    <button data-tab="reports">Reports</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+<div id="tab-students">
+  <div class="panel">
+    <div class="controls">
+      <div class="search-box"><span aria-hidden="true">🔎</span><input id="q" type="text" placeholder="Search name, email, phone, or course…" autocomplete="off"></div>
+      <select id="levelFilter"></select>
+      <select id="trustFilter">
+        <option value="">All record quality</option>
+        <option value="TRUSTED">Good</option>
+        <option value="GAPS">Good, with gaps</option>
+        <option value="REVIEW">Review required</option>
+        <option value="HOLD">Hold</option>
+      </select>
+      <select id="yearFilter"></select>
+      <select id="countryFilter"></select>
+      <select id="staffActivityFilter"><option value="">Any staff activity</option></select>
+      <select id="sortBy">
+        <option value="recent">Sort: Most recent first</option>
+        <option value="name">Sort: Name A–Z</option>
+        <option value="level_desc">Sort: Highest certified</option>
+        <option value="level_asc">Sort: Lowest certified</option>
+      </select>
+      <button class="btn" id="addBtn">+ Add Student</button>
+      <button class="btn ghost" id="exportBtn">⬇ Export CSV (view)</button>
+      <button class="btn ghost" id="callListBtn">📞 Call list (not contacted)</button>
+    </div>
+    <div class="controls-row2" id="chipRow"></div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="count-bar"><span id="countText">Loading…</span><span id="upsellText"></span></div>
+    <div class="grid">
+      <table>
+        <thead><tr><th>Name</th><th>Certifications</th><th>Record quality</th><th>Next step</th><th>Trained</th><th>Country</th><th>Status</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="emptyMsg" style="display:none;">No students match those filters.</div>
+    </div>
+    <div class="pager"><button id="prevBtn">← Prev</button><span id="pageText"></span><button id="nextBtn">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-queue" style="display:none;">
+  <div class="panel">
+    <p class="sub" style="margin:0 0 10px;">Prioritized by how recently they trained and how close they are to their next course. Nobody here is ready to call until a staff member verifies them below.</p>
+    <div class="controls">
+      <div class="search-box"><span aria-hidden="true">🔎</span><input id="qQueue" type="text" placeholder="Search the queue…" autocomplete="off"></div>
+      <button class="btn ghost" id="refreshQueueBtn">↻ Refresh order</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <div class="count-bar"><span id="queueCountText">Loading…</span></div>
+    <div class="grid">
+      <table>
+        <thead><tr><th>Name</th><th>Record quality</th><th>Contact info</th><th>Next step</th><th>Trained</th><th></th></tr></thead>
+        <tbody id="queueRows"></tbody>
+      </table>
+      <div class="empty" id="queueEmpty" style="display:none;">Nobody left to verify in this batch 🎉</div>
+    </div>
+    <div class="pager"><button id="queuePrevBtn">← Prev</button><span id="queuePageText"></span><button id="queueNextBtn">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-reports" style="display:none;">
+  <div class="report-grid">
+    <div class="report-card"><h3>Certifications by year</h3><div id="repYear"></div></div>
+    <div class="report-card"><h3>Top courses</h3><div id="repCourse"></div></div>
+    <div class="report-card"><h3>Record & contact quality</h3><div id="repTrust"></div></div>
+    <div class="report-card"><h3>Follow-up progress</h3><div id="repContact"></div></div>
+    <div class="report-card" style="grid-column:1/-1;"><h3>Staff activity</h3><div id="repStaff"></div></div>
+  </div>
+  <div class="report-card" style="margin-top:16px;">
+    <h3>Admin: yearly archive</h3>
+    <p class="sub" style="margin:0 0 10px;">Once a year, download everything added or changed live (new students, follow-up notes, edits, merges, verifications) and send it back so it can be folded permanently into the historical dataset — this resets how much room is left for new live activity.</p>
+    <button class="btn ghost" id="archiveBtn">⬇ Export full archive (admin)</button>
+  </div>
+</div>
+
+<footer>Demo with 300 invented students (sample data, not real people) · changes you make are saved in this browser only</footer>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modalBody"></div></div>
+
+<script id="__data" type="application/json">{"meta":{"groups":["Master log (sample)","Student files (sample)","Specialty courses (sample)","Kids programs (sample)","Rescue and EFR (sample)"]},"students":[{"n":"Aisha Bishop","b":"10.02.1973","e":"aisha.bishop63@example.com","c":"500000001","r":"Italy","k":["Open Water Diver"],"kd":["2019-10"],"lv":4,"f":"2019-10","l":"2019-10","g":[0],"y":"2019","id":0,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Berg","b":"1972-12-11","e":"carla.berg46@example.com","c":"500000002","r":"","k":["Junior Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["","","",""],"lv":6,"f":"","l":"","g":[4],"y":"","id":1,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Mei Said","b":"26.09.1995","e":"mei.said52@example.com","c":"500000003","r":"South Africa","k":["Open Water Diver"],"kd":["2018-12"],"lv":4,"f":"2018-12","l":"2018-12","g":[1],"y":"2018","id":2,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Priya Rahman","b":"1974-12-20","e":"priya.rahman99@example.com","c":"500000004","r":"UAE","k":["Scuba Diver"],"kd":["2026-09"],"lv":3,"f":"2026-09","l":"2026-09","g":[0],"y":"2026","id":3,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Chen Ibrahim","b":"1986-05-01","e":"chen.ibrahim90@example.com","c":"500000005","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2020-09","2021-02","2021-11","2022-06","2023-05"],"lv":7,"f":"2020-09","l":"2023-05","g":[4],"y":"2023","id":4,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Priya Ibrahim","b":"23.08.1974","e":"priya.ibrahim5@example.com","c":"500000006","r":"","k":["Open Water Diver"],"kd":["2021-08"],"lv":4,"f":"2021-08","l":"2021-08","g":[1],"y":"2021","id":5,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Anya Kovacs","b":"18.10.1996","e":"anya.kovacs53@example.com","c":"500000007","r":"UAE","k":["Open Water Diver"],"kd":["2016-05"],"lv":4,"f":"2016-05","l":"2016-05","g":[0],"y":"2016","id":6,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Ravi Keller","b":"24.12.1999","e":"ravi.keller75@example.com","c":"","r":"","k":["Open Water Diver"],"kd":["2022-11"],"lv":4,"f":"2022-11","l":"2022-11","g":[0],"y":"2022","id":7,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Dev Ibrahim","b":"2001-04-13","e":"dev.ibrahim76@example.com","c":"500000008","r":"UAE","k":["Open Water Diver"],"kd":["2016-11"],"lv":4,"f":"2016-11","l":"2016-11","g":[1],"y":"2016","id":8,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Hartley","b":"19.03.1978","e":"mateo.hartley16@example.com","c":"500000009","r":"France","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2023-01","2023-02","2023-11","2024-07","2025-01"],"lv":7,"f":"2023-01","l":"2025-01","g":[4],"y":"2025","id":9,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Said","b":"1996-11-07","e":"carla.said23@example.com","c":"500000010","r":"UAE","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":10,"dup":1,"tr":"TRUSTED","gr":"A"},{"n":"Niamh Sharma","b":"1979-06-06","e":"niamh.sharma55@example.com","c":"500000010","r":"South Africa","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":11,"dup":1,"tr":"REVIEW","gr":"A"},{"n":"Yuki Roux","b":"1997-11-11","e":"","c":"500000012","r":"UK","k":["Open Water Diver"],"kd":["2017-09"],"lv":4,"f":"2017-09","l":"2017-09","g":[0],"y":"2017","id":12,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Mateo Brandt","b":"1985-11-18","e":"mateo.brandt97@example.com","c":"500000013","r":"Russia","k":["Open Water Diver"],"kd":["2024-04"],"lv":4,"f":"2024-04","l":"2024-04","g":[0],"y":"2024","id":13,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Zara Haddad","b":"2014-05-11","e":"zara.haddad65@example.com","c":"500000014","r":"Russia","k":["Bubblemaker (Kids Intro)"],"kd":["2023-12"],"lv":1,"f":"2023-12","l":"2023-12","g":[3],"y":"2023","id":14,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nikolai Harper","b":"1990-06-25","e":"nikolai.harper13@example.com","c":"500000015","r":"UAE","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":15,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Dev Tan","b":"10.01.1995","e":"dev.tan33@example.com","c":"500000016","r":"Philippines","k":["Open Water Diver"],"kd":["2022-02"],"lv":4,"f":"2022-02","l":"2022-02","g":[0],"y":"2022","id":16,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Yuki Menon","b":"20.06.2011","e":"yuki.menon15@example.com","c":"500000017","r":"Philippines","k":["Junior Open Water Diver"],"kd":["2021-06"],"lv":4,"f":"2021-06","l":"2021-06","g":[0],"y":"2021","id":17,"dup":2,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Rahman","b":"09.07.2003","e":"","c":"500000017","r":"Germany","k":["Open Water Diver"],"kd":["2018-07"],"lv":4,"f":"2018-07","l":"2018-07","g":[0],"y":"2018","id":18,"dup":2,"tr":"GAPS","gr":"B"},{"n":"Nikolai Costa","b":"11.05.2000","e":"nikolai.costa5@example.com","c":"","r":"Pakistan","k":["Junior Open Water Diver"],"kd":["2017-11"],"lv":4,"f":"2017-11","l":"2017-11","g":[0],"y":"2017","id":19,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Chen Silva","b":"1982-09-27","e":"chen.silva52@example.com","c":"","r":"India","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2026-11","2026-10"],"lv":5,"f":"2026-11","l":"2026-10","g":[1],"y":"2026","id":20,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Nadia Duarte","b":"14.12.2001","e":"nadia.duarte63@example.com","c":"","r":"UK","k":["Junior Open Water Diver"],"kd":["2022-05"],"lv":4,"f":"2022-05","l":"2022-05","g":[0],"y":"2022","id":21,"dup":0,"tr":"REVIEW","gr":"C"},{"n":"Sofia Said","b":"26.09.2002","e":"sofia.said75@example.com","c":"500000019","r":"UK","k":["Open Water Diver"],"kd":["2026-01"],"lv":4,"f":"2026-01","l":"2026-01","g":[0],"y":"2026","id":22,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Hana Brandt","b":"2002-05-12","e":"hana.brandt25@example.com","c":"","r":"Egypt","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":23,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Chen Harper","b":"2015-06-18","e":"chen.harper69@example.com","c":"500000020","r":"UAE","k":["Bubblemaker (Kids Intro)","PADI Seal Team (Junior)"],"kd":["2022-07","2023-01"],"lv":2,"f":"2022-07","l":"2023-01","g":[3],"y":"2023","id":24,"dup":3,"tr":"TRUSTED","gr":"A"},{"n":"Lucia Okafor","b":"09.07.1972","e":"","c":"500000020","r":"UAE","k":["Open Water Diver"],"kd":["2017-03"],"lv":4,"f":"2017-03","l":"2017-03","g":[1],"y":"2017","id":25,"dup":3,"tr":"TRUSTED","gr":"B"},{"n":"Ethan Brandt","b":"25.05.1987","e":"ethan.brandt11@example.com","c":"500000022","r":"UK","k":["Junior Open Water Diver"],"kd":["2024-11"],"lv":4,"f":"2024-11","l":"2024-11","g":[1],"y":"2024","id":26,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Yuki Kovacs","b":"1992-04-05","e":"yuki.kovacs89@example.com","c":"500000023","r":"","k":["Open Water Diver"],"kd":["2020-06"],"lv":4,"f":"2020-06","l":"2020-06","g":[0],"y":"2020","id":27,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Ethan Berg","b":"2003-02-09","e":"ethan.berg70@example.com","c":"500000024","r":"Italy","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":28,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Rahman","b":"13.01.1989","e":"carla.rahman86@example.com","c":"500000025","r":"UAE","k":["Open Water Diver"],"kd":["2022-08"],"lv":4,"f":"2022-08","l":"2022-08","g":[1],"y":"2022","id":29,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Sofia Fraser","b":"01.06.1985","e":"sofia.fraser5@example.com","c":"500000026","r":"Italy","k":["Open Water Diver"],"kd":["2022-08"],"lv":4,"f":"2022-08","l":"2022-08","g":[1],"y":"2022","id":30,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Mia Brandt","b":"14.10.1973","e":"mia.brandt60@example.com","c":"500000027","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2021-01","2021-03"],"lv":5,"f":"2021-01","l":"2021-03","g":[1],"y":"2021","id":31,"dup":4,"tr":"GAPS","gr":"A"},{"n":"Nikolai Marlow","b":"16.05.1998","e":"nikolai.marlow61@example.com","c":"500000027","r":"Russia","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":32,"dup":4,"tr":"TRUSTED","gr":"A"},{"n":"Noah Duarte","b":"24.12.1972","e":"noah.duarte52@example.com","c":"500000029","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2018-08","2018-12"],"lv":5,"f":"2018-08","l":"2018-12","g":[1],"y":"2018","id":33,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Anika Nasser","b":"28.05.1979","e":"anika.nasser47@example.com","c":"500000030","r":"Egypt","k":["Emergency First Response"],"kd":["2026-10"],"lv":0,"f":"2026-10","l":"2026-10","g":[3],"y":"2026","id":34,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Yusuf Stone","b":"1988-06-21","e":"yusuf.stone35@example.com","c":"500000031","r":"","k":["Scuba Diver"],"kd":["2017-09"],"lv":3,"f":"2017-09","l":"2017-09","g":[0],"y":"2017","id":35,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Jonas Iyer","b":"1987-03-05","e":"jonas.iyer8@example.com","c":"500000032","r":"","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":36,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Omar Ibrahim","b":"1987-04-17","e":"omar.ibrahim83@example.com","c":"500000033","r":"","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":37,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Isla Berg","b":"1984-06-25","e":"isla.berg8@example.com","c":"500000034","r":"","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":38,"dup":5,"tr":"TRUSTED","gr":"A"},{"n":"Anya Ashby","b":"21.05.1981","e":"anya.ashby55@example.com","c":"500000034","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2024-03","2024-07","2024-11","2025-10"],"lv":6,"f":"2024-03","l":"2025-10","g":[4],"y":"2025","id":39,"dup":5,"tr":"TRUSTED","gr":"A"},{"n":"Greta Tanaka","b":"1981-11-14","e":"greta.tanaka80@example.com","c":"","r":"France","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":40,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Mei Reeves","b":"1976-02-26","e":"mei.reeves35@example.com","c":"","r":"Germany","k":["Open Water Diver"],"kd":["2018-06"],"lv":4,"f":"2018-06","l":"2018-06","g":[1],"y":"2018","id":41,"dup":0,"tr":"REVIEW","gr":"C"},{"n":"Hugo Ashby","b":"03.01.1986","e":"hugo.ashby68@example.com","c":"500000036","r":"UAE","k":["Open Water Diver"],"kd":["2023-11"],"lv":4,"f":"2023-11","l":"2023-11","g":[1],"y":"2023","id":42,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Mei Rao","b":"01.05.2002","e":"mei.rao4@example.com","c":"","r":"UAE","k":["Junior Open Water Diver"],"kd":["2022-09"],"lv":4,"f":"2022-09","l":"2022-09","g":[0],"y":"2022","id":43,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Isla Larsen","b":"1996-04-25","e":"isla.larsen41@example.com","c":"500000037","r":"South Africa","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["2018-12","2019-08","2020-08"],"lv":5.5,"f":"2018-12","l":"2020-08","g":[2],"y":"2020","id":44,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Freya Sato","b":"20.06.1969","e":"freya.sato67@example.com","c":"500000246","r":"UK","k":["Open Water Diver"],"kd":["2015-08"],"lv":4,"f":"2015-08","l":"2015-08","g":[0],"y":"2015","id":45,"dup":6,"tr":"TRUSTED","gr":"A"},{"n":"Salma Okafor","b":"25.05.1971","e":"salma.okafor52@example.com","c":"500000246","r":"","k":["Open Water Diver"],"kd":["2020-02"],"lv":4,"f":"2020-02","l":"2020-02","g":[1],"y":"2020","id":46,"dup":6,"tr":"HOLD","gr":"A"},{"n":"Mia Costa","b":"2003-11-02","e":"mia.costa81@example.com","c":"500000038","r":"Italy","k":["Scuba Diver"],"kd":[""],"lv":3,"f":"","l":"","g":[0],"y":"","id":47,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Layla Hartley","b":"2016-10-21","e":"","c":"","r":"Russia","k":["Bubblemaker (Kids Intro)"],"kd":["2020-05"],"lv":1,"f":"2020-05","l":"2020-05","g":[3],"y":"2020","id":48,"dup":0,"tr":"TRUSTED","gr":"E"},{"n":"Nadia Reeves","b":"1996-11-20","e":"nadia.reeves32@example.com","c":"500000039","r":"Germany","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2021-08","2022-10","2022-11","2023-08","2024-02"],"lv":7,"f":"2021-08","l":"2024-02","g":[4],"y":"2024","id":49,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Elena Petrov","b":"2004-09-25","e":"","c":"","r":"South Africa","k":["Open Water Diver"],"kd":["2022-08"],"lv":4,"f":"2022-08","l":"2022-08","g":[0],"y":"2022","id":50,"dup":0,"tr":"GAPS","gr":"E"},{"n":"Omar Ortega","b":"1969-11-09","e":"omar.ortega73@example.com","c":"500000040","r":"Egypt","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2017-07","2017-09"],"lv":5,"f":"2017-07","l":"2017-09","g":[1],"y":"2017","id":51,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Dev Delgado","b":"15.12.2015","e":"","c":"0000","r":"Germany","k":["Bubblemaker (Kids Intro)"],"kd":["2026-03"],"lv":1,"f":"2026-03","l":"2026-03","g":[3],"y":"2026","id":52,"dup":7,"tr":"REVIEW","gr":"D"},{"n":"Callum Ashby","b":"21.07.1977","e":"callum.ashby3@example.com","c":"0000","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["2016-01","2016-11","2017-08"],"lv":5.5,"f":"2016-01","l":"2017-08","g":[2],"y":"2017","id":53,"dup":7,"tr":"TRUSTED","gr":"A"},{"n":"Tomas Okafor","b":"1986-06-27","e":"tomas.okafor39@example.com","c":"500000042","r":"","k":["Open Water Diver"],"kd":["2025-08"],"lv":4,"f":"2025-08","l":"2025-08","g":[0],"y":"2025","id":54,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Camille Ellis","b":"20.04.1993","e":"camille.ellis30@example.com","c":"500000043","r":"","k":["Open Water Diver"],"kd":["2018-12"],"lv":4,"f":"2018-12","l":"2018-12","g":[1],"y":"2018","id":55,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Tomas Silva","b":"13.08.1976","e":"tomas.silva26@example.com","c":"500000044","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":56,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Kenji Rahman","b":"27.06.2000","e":"kenji.rahman66@example.com","c":"500000045","r":"Egypt","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["","",""],"lv":5.5,"f":"","l":"","g":[2],"y":"","id":57,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Diego Coleman","b":"1979-08-20","e":"diego.coleman96@example.com","c":"500000046","r":"UK","k":["Junior Open Water Diver"],"kd":["2019-04"],"lv":4,"f":"2019-04","l":"2019-04","g":[1],"y":"2019","id":58,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Noah Keller","b":"2001-11-04","e":"noah.keller16@example.com","c":"500000247","r":"Pakistan","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":59,"dup":8,"tr":"TRUSTED","gr":"A"},{"n":"Ava Ellis","b":"1973-06-08","e":"ava.ellis71@example.com","c":"500000247","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2017-11","2018-06","2018-08","2019-07","2019-09"],"lv":7,"f":"2017-11","l":"2019-09","g":[4],"y":"2019","id":60,"dup":8,"tr":"TRUSTED","gr":"A"},{"n":"Nadia Chowdhury","b":"1974-01-14","e":"nadia.chowdhury9@example.com","c":"500000048","r":"UAE","k":["Scuba Diver"],"kd":["2017-01"],"lv":3,"f":"2017-01","l":"2017-01","g":[0],"y":"2017","id":61,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Anya Haddad","b":"1972-07-21","e":"anya.haddad56@example.com","c":"500000049","r":"Russia","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2017-03","2018-01"],"lv":5,"f":"2017-03","l":"2018-01","g":[1],"y":"2018","id":62,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Aisha Novak","b":"23.04.1984","e":"aisha.novak33@example.com","c":"500000050","r":"","k":["Open Water Diver"],"kd":["2021-09"],"lv":4,"f":"2021-09","l":"2021-09","g":[1],"y":"2021","id":63,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Priya Larsen","b":"1975-11-11","e":"","c":"500000051","r":"France","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":64,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Lucia Chowdhury","b":"1968-06-14","e":"lucia.chowdhury50@example.com","c":"500000052","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2020-06","2021-04"],"lv":5,"f":"2020-06","l":"2021-04","g":[1],"y":"2021","id":65,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Ethan Archer","b":"1991-10-18","e":"ethan.archer27@example.com","c":"500000053","r":"","k":["Open Water Diver"],"kd":["2018-05"],"lv":4,"f":"2018-05","l":"2018-05","g":[0],"y":"2018","id":66,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nikolai Moreno","b":"15.03.1970","e":"nikolai.moreno10@example.com","c":"500000054","r":"","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":67,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Lucia Brandt","b":"15.02.1971","e":"lucia.brandt69@example.com","c":"","r":"France","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2024-04","2024-05","2024-12"],"lv":5.5,"f":"2024-04","l":"2024-12","g":[2],"y":"2024","id":68,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Liam Volkov","b":"1986-01-04","e":"liam.volkov60@example.com","c":"500000055","r":"Egypt","k":["Open Water Diver"],"kd":["2016-03"],"lv":4,"f":"2016-03","l":"2016-03","g":[0],"y":"2016","id":69,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Liam Quinn","b":"1982-08-18","e":"liam.quinn39@example.com","c":"500000056","r":"UAE","k":["Open Water Diver"],"kd":["2016-09"],"lv":4,"f":"2016-09","l":"2016-09","g":[0],"y":"2016","id":70,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Khoury","b":"02.09.1986","e":"carla.khoury47@example.com","c":"500000057","r":"Lebanon","k":["Open Water Diver"],"kd":["2021-08"],"lv":4,"f":"2021-08","l":"2021-08","g":[0],"y":"2021","id":71,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Chen Marlow","b":"1994-02-16","e":"chen.marlow27@example.com","c":"500000058","r":"Philippines","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["2017-08","2018-03"],"lv":5,"f":"2017-08","l":"2018-03","g":[1],"y":"2018","id":72,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Hugo Whitfield","b":"2014-11-27","e":"hugo.whitfield2@example.com","c":"500000059","r":"Russia","k":["Bubblemaker (Kids Intro)","PADI Seal Team (Junior)"],"kd":["2018-07","2018-09"],"lv":2,"f":"2018-07","l":"2018-09","g":[3],"y":"2018","id":73,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nikolai Delgado","b":"21.01.2017","e":"nikolai.delgado64@example.com","c":"500000060","r":"Lebanon","k":["Bubblemaker (Kids Intro)","PADI Seal Team (Junior)"],"kd":["2023-04","2023-05"],"lv":2,"f":"2023-04","l":"2023-05","g":[3],"y":"2023","id":74,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Niamh Doyle","b":"05.08.1970","e":"niamh.doyle3@example.com","c":"500000061","r":"South Africa","k":["Open Water Diver"],"kd":["2021-02"],"lv":4,"f":"2021-02","l":"2021-02","g":[1],"y":"2021","id":75,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Ethan Costa","b":"24.01.1975","e":"ethan.costa36@example.com","c":"500000062","r":"South Africa","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":76,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Layla Ibrahim","b":"18.10.1981","e":"layla.ibrahim56@example.com","c":"500000063","r":"","k":["Open Water Diver"],"kd":["2017-07"],"lv":4,"f":"2017-07","l":"2017-07","g":[1],"y":"2017","id":77,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Camille Silva","b":"1982-12-25","e":"camille.silva35@example.com","c":"","r":"Philippines","k":["Open Water Diver"],"kd":["2024-06"],"lv":4,"f":"2024-06","l":"2024-06","g":[1],"y":"2024","id":78,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Emma Petrov","b":"1989-12-26","e":"","c":"","r":"Egypt","k":["Junior Open Water Diver"],"kd":["2023-05"],"lv":4,"f":"2023-05","l":"2023-05","g":[1],"y":"2023","id":79,"dup":0,"tr":"GAPS","gr":"E"},{"n":"Ethan Ibrahim","b":"1985-01-22","e":"ethan.ibrahim74@example.com","c":"500000064","r":"UK","k":["Junior Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2017-01","2017-10","2018-12"],"lv":5.5,"f":"2017-01","l":"2018-12","g":[2],"y":"2018","id":80,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Niamh Ellis","b":"01.12.2003","e":"","c":"500000065","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2023-09","2023-12","2024-05"],"lv":5.5,"f":"2023-09","l":"2024-05","g":[2],"y":"2024","id":81,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Camille Marlow","b":"07.08.1977","e":"camille.marlow76@example.com","c":"500000066","r":"UAE","k":["Open Water Diver"],"kd":["2022-01"],"lv":4,"f":"2022-01","l":"2022-01","g":[1],"y":"2022","id":82,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Emma Larsen","b":"1974-05-13","e":"emma.larsen54@example.com","c":"500000067","r":"UAE","k":["Open Water Diver"],"kd":["2020-08"],"lv":4,"f":"2020-08","l":"2020-08","g":[0],"y":"2020","id":83,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Rohan Lambert","b":"2009-05-06","e":"rohan.lambert1@example.com","c":"","r":"Italy","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":84,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Lucas Fraser","b":"01.08.1996","e":"","c":"500000068","r":"South Africa","k":["Junior Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2017-10","2018-02","2018-03","2018-05"],"lv":6,"f":"2017-10","l":"2018-05","g":[4],"y":"2018","id":85,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Yusuf Bishop","b":"2000-07-04","e":"","c":"","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2016-04","2016-08"],"lv":5,"f":"2016-04","l":"2016-08","g":[1],"y":"2016","id":86,"dup":0,"tr":"TRUSTED","gr":"E"},{"n":"Meera Ortega","b":"1974-07-16","e":"meera.ortega55@example.com","c":"500000069","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2022-08","2023-10","2024-04","2024-10"],"lv":6,"f":"2022-08","l":"2024-10","g":[4],"y":"2024","id":87,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Ingrid Tanaka","b":"1978-07-09","e":"","c":"500000070","r":"France","k":["Emergency First Response"],"kd":[""],"lv":0,"f":"","l":"","g":[3],"y":"","id":88,"dup":0,"tr":"REVIEW","gr":"B"},{"n":"Noah Ashby","b":"1986-03-13","e":"noah.ashby91@example.com","c":"500000071","r":"Germany","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["2024-03","2024-04","2025-01"],"lv":5.5,"f":"2024-03","l":"2025-01","g":[2],"y":"2025","id":89,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Bishop","b":"1987-02-11","e":"carla.bishop76@example.com","c":"","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2019-07","2019-08"],"lv":5,"f":"2019-07","l":"2019-08","g":[1],"y":"2019","id":90,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Chen Iyer","b":"1997-07-23","e":"chen.iyer61@example.com","c":"500000072","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2017-10","2018-04","2019-04","2019-11"],"lv":6,"f":"2017-10","l":"2019-11","g":[4],"y":"2019","id":91,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Chen Haddad","b":"13.09.1981","e":"chen.haddad52@example.com","c":"500000073","r":"","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":92,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Yusuf Costa","b":"02.02.1991","e":"yusuf.costa41@example.com","c":"500000074","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":93,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Ava Kovacs","b":"1991-02-14","e":"","c":"500000075","r":"Lebanon","k":["Junior Open Water Diver"],"kd":["2025-08"],"lv":4,"f":"2025-08","l":"2025-08","g":[0],"y":"2025","id":94,"dup":0,"tr":"REVIEW","gr":"B"},{"n":"Jamal Stone","b":"1990-01-06","e":"jamal.stone81@example.com","c":"","r":"UK","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["2018-04","2018-06"],"lv":5,"f":"2018-04","l":"2018-06","g":[1],"y":"2018","id":95,"dup":0,"tr":"REVIEW","gr":"C"},{"n":"Mia Petrov","b":"1976-04-17","e":"mia.petrov28@example.com","c":"500000076","r":"UAE","k":["Open Water Diver"],"kd":["2017-11"],"lv":4,"f":"2017-11","l":"2017-11","g":[0],"y":"2017","id":96,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Jonas Khoury","b":"2002-08-16","e":"jonas.khoury86@example.com","c":"500000077","r":"Philippines","k":["Open Water Diver"],"kd":["2017-03"],"lv":4,"f":"2017-03","l":"2017-03","g":[0],"y":"2017","id":97,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Meera Mansour","b":"26.10.1978","e":"meera.mansour56@example.com","c":"500000078","r":"South Africa","k":["Open Water Diver"],"kd":["2018-11"],"lv":4,"f":"2018-11","l":"2018-11","g":[1],"y":"2018","id":98,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Elena Farah","b":"1971-11-12","e":"elena.farah60@example.com","c":"500000079","r":"Philippines","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":99,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Liam Rao","b":"1992-09-28","e":"liam.rao60@example.com","c":"500000080","r":"UAE","k":["Junior Open Water Diver"],"kd":["2019-05"],"lv":4,"f":"2019-05","l":"2019-05","g":[0],"y":"2019","id":100,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Meera Costa","b":"1983-03-27","e":"meera.costa23@example.com","c":"","r":"UAE","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["2024-05","2025-06"],"lv":5,"f":"2024-05","l":"2025-06","g":[1],"y":"2025","id":101,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Mateo Nasser","b":"19.01.1979","e":"mateo.nasser85@example.com","c":"500000081","r":"Italy","k":["Junior Open Water Diver"],"kd":["2018-01"],"lv":4,"f":"2018-01","l":"2018-01","g":[1],"y":"2018","id":102,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Jonas Said","b":"06.03.2000","e":"jonas.said64@example.com","c":"500000082","r":"South Africa","k":["Open Water Diver"],"kd":["2016-01"],"lv":4,"f":"2016-01","l":"2016-01","g":[0],"y":"2016","id":103,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Chen Chowdhury","b":"2017-12-26","e":"chen.chowdhury64@example.com","c":"500000083","r":"Russia","k":["Bubblemaker (Kids Intro)"],"kd":["2017-10"],"lv":1,"f":"2017-10","l":"2017-10","g":[3],"y":"2017","id":104,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Tara Lim","b":"15.08.1998","e":"tara.lim27@example.com","c":"500000084","r":"UAE","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":105,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Yusuf Ellis","b":"2002-10-19","e":"yusuf.ellis57@example.com","c":"500000085","r":"India","k":["Open Water Diver"],"kd":["2018-11"],"lv":4,"f":"2018-11","l":"2018-11","g":[0],"y":"2018","id":106,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Jonas Chowdhury","b":"09.10.1979","e":"jonas.chowdhury12@example.com","c":"500000086","r":"South Africa","k":["Open Water Diver"],"kd":["2020-10"],"lv":4,"f":"2020-10","l":"2020-10","g":[0],"y":"2020","id":107,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Pablo Sharma","b":"1999-10-17","e":"","c":"500000087","r":"UAE","k":["Open Water Diver"],"kd":["2023-06"],"lv":4,"f":"2023-06","l":"2023-06","g":[1],"y":"2023","id":108,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Meera Berg","b":"1972-02-10","e":"","c":"500000088","r":"Philippines","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":109,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Lucia Reeves","b":"07.02.1968","e":"lucia.reeves67@example.com","c":"500000089","r":"UAE","k":["Junior Open Water Diver"],"kd":["2018-01"],"lv":4,"f":"2018-01","l":"2018-01","g":[1],"y":"2018","id":110,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Ravi Delgado","b":"1994-02-01","e":"ravi.delgado60@example.com","c":"500000090","r":"UAE","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":111,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Diego Okafor","b":"19.05.1990","e":"diego.okafor82@example.com","c":"500000091","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2026-08","2026-10"],"lv":5,"f":"2026-08","l":"2026-10","g":[1],"y":"2026","id":112,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Ava Brandt","b":"16.04.2015","e":"ava.brandt32@example.com","c":"500000092","r":"India","k":["Bubblemaker (Kids Intro)"],"kd":["2022-12"],"lv":1,"f":"2022-12","l":"2022-12","g":[3],"y":"2022","id":113,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Karim Berg","b":"09.10.1989","e":"karim.berg34@example.com","c":"","r":"","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["2016-09","2017-03"],"lv":5,"f":"2016-09","l":"2017-03","g":[1],"y":"2017","id":114,"dup":0,"tr":"REVIEW","gr":"C"},{"n":"Anya Novak","b":"01.05.1981","e":"anya.novak10@example.com","c":"500000093","r":"Egypt","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2017-06","2017-09","2018-06"],"lv":5.5,"f":"2017-06","l":"2018-06","g":[2],"y":"2018","id":115,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Lucia Stone","b":"15.02.1983","e":"lucia.stone70@example.com","c":"500000094","r":"UAE","k":["Junior Open Water Diver"],"kd":["2023-03"],"lv":4,"f":"2023-03","l":"2023-03","g":[1],"y":"2023","id":116,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Freya Petrov","b":"26.12.1987","e":"freya.petrov83@example.com","c":"500000095","r":"Russia","k":["Open Water Diver"],"kd":["2020-04"],"lv":4,"f":"2020-04","l":"2020-04","g":[0],"y":"2020","id":117,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Aisha Hartley","b":"1991-05-24","e":"aisha.hartley30@example.com","c":"500000096","r":"UAE","k":["Open Water Diver"],"kd":["2018-07"],"lv":4,"f":"2018-07","l":"2018-07","g":[0],"y":"2018","id":118,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Lim","b":"17.03.1968","e":"diego.lim10@example.com","c":"500000097","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2025-03","2026-03"],"lv":5,"f":"2025-03","l":"2026-03","g":[1],"y":"2026","id":119,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nadia Stone","b":"2000-08-17","e":"nadia.stone57@example.com","c":"500000098","r":"","k":["Open Water Diver"],"kd":["2022-11"],"lv":4,"f":"2022-11","l":"2022-11","g":[1],"y":"2022","id":120,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Jamal Hartley","b":"02.08.1994","e":"jamal.hartley38@example.com","c":"500000099","r":"South Africa","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2020-07","2021-02","2021-03"],"lv":5.5,"f":"2020-07","l":"2021-03","g":[2],"y":"2021","id":121,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Omar Costa","b":"03.01.1976","e":"omar.costa26@example.com","c":"500000100","r":"Italy","k":["Junior Open Water Diver"],"kd":["2025-08"],"lv":4,"f":"2025-08","l":"2025-08","g":[0],"y":"2025","id":122,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Yusuf Archer","b":"1969-02-28","e":"yusuf.archer44@example.com","c":"500000101","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2019-06","2020-03","2020-04","2020-12"],"lv":6,"f":"2019-06","l":"2020-12","g":[4],"y":"2020","id":123,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Yusuf Novak","b":"11.04.1985","e":"yusuf.novak36@example.com","c":"","r":"UAE","k":["Scuba Diver"],"kd":["2021-03"],"lv":3,"f":"2021-03","l":"2021-03","g":[0],"y":"2021","id":124,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Chen Lambert","b":"1976-04-03","e":"chen.lambert40@example.com","c":"500000102","r":"Russia","k":["Junior Open Water Diver"],"kd":["2019-08"],"lv":4,"f":"2019-08","l":"2019-08","g":[1],"y":"2019","id":125,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Finn Khoury","b":"06.05.1994","e":"finn.khoury2@example.com","c":"500000103","r":"Philippines","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":126,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Yusuf Tanaka","b":"26.02.1986","e":"yusuf.tanaka43@example.com","c":"500000104","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2016-09","2017-10","2018-02","2018-11"],"lv":6,"f":"2016-09","l":"2018-11","g":[4],"y":"2018","id":127,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Ava Sharma","b":"13.03.1992","e":"ava.sharma19@example.com","c":"500000105","r":"Pakistan","k":["Junior Open Water Diver"],"kd":["2025-01"],"lv":4,"f":"2025-01","l":"2025-01","g":[0],"y":"2025","id":128,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Omar Duarte","b":"1995-01-11","e":"omar.duarte51@example.com","c":"","r":"","k":["Open Water Diver"],"kd":["2016-12"],"lv":4,"f":"2016-12","l":"2016-12","g":[0],"y":"2016","id":129,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Kenji Mansour","b":"1982-01-25","e":"kenji.mansour27@example.com","c":"500000106","r":"Egypt","k":["Open Water Diver"],"kd":["2019-06"],"lv":4,"f":"2019-06","l":"2019-06","g":[1],"y":"2019","id":130,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Niamh Menon","b":"1968-12-14","e":"","c":"500000107","r":"UAE","k":["Open Water Diver"],"kd":["2017-09"],"lv":4,"f":"2017-09","l":"2017-09","g":[0],"y":"2017","id":131,"dup":0,"tr":"REVIEW","gr":"B"},{"n":"Aisha Fraser","b":"1991-10-21","e":"aisha.fraser77@example.com","c":"500000108","r":"UK","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2024-05","2024-10","2025-06"],"lv":5.5,"f":"2024-05","l":"2025-06","g":[2],"y":"2025","id":132,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Camille Rahman","b":"1994-09-01","e":"camille.rahman28@example.com","c":"0000","r":"","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":133,"dup":0,"tr":"TRUSTED","gr":"D"},{"n":"Carla Hartley","b":"1979-06-16","e":"","c":"500000110","r":"Germany","k":["Open Water Diver"],"kd":["2023-11"],"lv":4,"f":"2023-11","l":"2023-11","g":[1],"y":"2023","id":134,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Layla Stone","b":"10.08.1978","e":"layla.stone29@example.com","c":"500000111","r":"France","k":["Junior Open Water Diver"],"kd":["2021-09"],"lv":4,"f":"2021-09","l":"2021-09","g":[0],"y":"2021","id":135,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Emma Volkov","b":"05.06.1974","e":"emma.volkov18@example.com","c":"","r":"Egypt","k":["Open Water Diver"],"kd":["2016-03"],"lv":4,"f":"2016-03","l":"2016-03","g":[1],"y":"2016","id":136,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Greta Doyle","b":"2002-10-25","e":"greta.doyle92@example.com","c":"500000112","r":"Germany","k":["Junior Open Water Diver"],"kd":["2024-07"],"lv":4,"f":"2024-07","l":"2024-07","g":[0],"y":"2024","id":137,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Tomas Duarte","b":"2010-01-04","e":"tomas.duarte58@example.com","c":"","r":"Egypt","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":138,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Kenji Petrov","b":"14.12.2017","e":"kenji.petrov99@example.com","c":"500000113","r":"India","k":["Bubblemaker (Kids Intro)","PADI Seal Team (Junior)"],"kd":["2021-09","2022-01"],"lv":2,"f":"2021-09","l":"2022-01","g":[3],"y":"2022","id":139,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Berg","b":"16.08.1986","e":"diego.berg43@example.com","c":"500000114","r":"India","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2021-12","2022-07","2022-08","2022-11","2023-06"],"lv":7,"f":"2021-12","l":"2023-06","g":[4],"y":"2023","id":140,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Delgado","b":"16.02.1981","e":"diego.delgado12@example.com","c":"500000115","r":"UAE","k":["Open Water Diver"],"kd":["2014-05"],"lv":4,"f":"2014-05","l":"2014-05","g":[1],"y":"2014","id":141,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Karim Khoury","b":"1980-11-24","e":"","c":"500000116","r":"Germany","k":["Open Water Diver"],"kd":["2017-07"],"lv":4,"f":"2017-07","l":"2017-07","g":[1],"y":"2017","id":142,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Omar Ellis","b":"02.01.1994","e":"omar.ellis42@example.com","c":"500000117","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2022-06","2022-12","2023-11"],"lv":5.5,"f":"2022-06","l":"2023-11","g":[2],"y":"2023","id":143,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Mansour","b":"1998-04-03","e":"diego.mansour55@example.com","c":"500000118","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2020-08","2020-12"],"lv":5,"f":"2020-08","l":"2020-12","g":[1],"y":"2020","id":144,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Noah Coleman","b":"24.06.1987","e":"noah.coleman60@example.com","c":"500000119","r":"UAE","k":["Open Water Diver"],"kd":["2017-12"],"lv":4,"f":"2017-12","l":"2017-12","g":[0],"y":"2017","id":145,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Tara Brandt","b":"07.05.1970","e":"tara.brandt53@example.com","c":"500000120","r":"South Africa","k":["Open Water Diver"],"kd":["2024-09"],"lv":4,"f":"2024-09","l":"2024-09","g":[1],"y":"2024","id":146,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Patel","b":"20.12.1975","e":"mateo.patel32@example.com","c":"500000121","r":"Philippines","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":147,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nikolai Nasser","b":"05.11.1978","e":"nikolai.nasser74@example.com","c":"500000122","r":"UK","k":["Junior Open Water Diver"],"kd":["2020-01"],"lv":4,"f":"2020-01","l":"2020-01","g":[1],"y":"2020","id":148,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Pablo Lim","b":"1984-12-11","e":"pablo.lim95@example.com","c":"500000123","r":"UK","k":["Open Water Diver"],"kd":["2015-09"],"lv":4,"f":"2015-09","l":"2015-09","g":[1],"y":"2015","id":149,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Chen Costa","b":"1996-03-26","e":"chen.costa35@example.com","c":"500000124","r":"","k":["Scuba Diver"],"kd":["2023-02"],"lv":3,"f":"2023-02","l":"2023-02","g":[0],"y":"2023","id":150,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Lambert","b":"1988-03-10","e":"","c":"","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2016-12","2017-07"],"lv":5,"f":"2016-12","l":"2017-07","g":[1],"y":"2017","id":151,"dup":0,"tr":"TRUSTED","gr":"E"},{"n":"Mateo Marlow","b":"10.08.1991","e":"mateo.marlow81@example.com","c":"500000125","r":"South Africa","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":152,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Liam Lambert","b":"12.07.1971","e":"liam.lambert5@example.com","c":"","r":"South Africa","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":153,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Freya Archer","b":"1983-04-03","e":"freya.archer23@example.com","c":"500000126","r":"","k":["Open Water Diver"],"kd":["2025-09"],"lv":4,"f":"2025-09","l":"2025-09","g":[0],"y":"2025","id":154,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Layla Tanaka","b":"1992-07-04","e":"layla.tanaka11@example.com","c":"500000127","r":"UAE","k":["Open Water Diver"],"kd":["2024-01"],"lv":4,"f":"2024-01","l":"2024-01","g":[1],"y":"2024","id":155,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Karim Reeves","b":"1971-02-09","e":"karim.reeves3@example.com","c":"","r":"Italy","k":["Emergency First Response"],"kd":["2018-03"],"lv":0,"f":"2018-03","l":"2018-03","g":[3],"y":"2018","id":156,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Mateo Ibrahim","b":"28.11.1992","e":"mateo.ibrahim84@example.com","c":"500000128","r":"UAE","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":157,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Tara Hartley","b":"28.04.1980","e":"","c":"","r":"","k":["Open Water Diver"],"kd":["2023-04"],"lv":4,"f":"2023-04","l":"2023-04","g":[1],"y":"2023","id":158,"dup":0,"tr":"HOLD","gr":"E"},{"n":"Zara Rao","b":"16.06.1982","e":"","c":"","r":"UAE","k":["Open Water Diver"],"kd":["2022-05"],"lv":4,"f":"2022-05","l":"2022-05","g":[0],"y":"2022","id":159,"dup":0,"tr":"TRUSTED","gr":"E"},{"n":"Camille Fraser","b":"05.06.1989","e":"camille.fraser79@example.com","c":"500000129","r":"UAE","k":["Open Water Diver"],"kd":["2023-10"],"lv":4,"f":"2023-10","l":"2023-10","g":[0],"y":"2023","id":160,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Freya Ibrahim","b":"28.07.1974","e":"freya.ibrahim14@example.com","c":"500000130","r":"UAE","k":["Junior Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["","",""],"lv":5.5,"f":"","l":"","g":[2],"y":"","id":161,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Elena Brandt","b":"17.01.1999","e":"elena.brandt90@example.com","c":"500000131","r":"Russia","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":162,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Greta Menon","b":"16.05.1972","e":"greta.menon81@example.com","c":"500000132","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2026-04","2026-10"],"lv":5,"f":"2026-04","l":"2026-10","g":[1],"y":"2026","id":163,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Noah Archer","b":"1970-02-19","e":"","c":"500000133","r":"","k":["Open Water Diver"],"kd":["2023-10"],"lv":4,"f":"2023-10","l":"2023-10","g":[1],"y":"2023","id":164,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Emma Silva","b":"1974-06-05","e":"emma.silva5@example.com","c":"","r":"South Africa","k":["Open Water Diver"],"kd":["2019-05"],"lv":4,"f":"2019-05","l":"2019-05","g":[1],"y":"2019","id":165,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Aisha Mansour","b":"1988-04-02","e":"","c":"500000134","r":"UAE","k":["Open Water Diver"],"kd":["2017-11"],"lv":4,"f":"2017-11","l":"2017-11","g":[0],"y":"2017","id":166,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Yusuf Ortega","b":"26.10.1988","e":"yusuf.ortega16@example.com","c":"500000135","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2026-02","2026-03"],"lv":5,"f":"2026-02","l":"2026-03","g":[1],"y":"2026","id":167,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Karim Said","b":"2011-11-24","e":"karim.said26@example.com","c":"","r":"Russia","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":168,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Niamh Chowdhury","b":"12.11.1992","e":"niamh.chowdhury99@example.com","c":"500000136","r":"France","k":["Open Water Diver"],"kd":["2022-07"],"lv":4,"f":"2022-07","l":"2022-07","g":[1],"y":"2022","id":169,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Ingrid Rao","b":"1976-12-27","e":"ingrid.rao15@example.com","c":"500000137","r":"South Africa","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":170,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Olivia Marlow","b":"1970-08-15","e":"olivia.marlow20@example.com","c":"500000138","r":"","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["2021-01","2021-05","2021-10"],"lv":5.5,"f":"2021-01","l":"2021-10","g":[2],"y":"2021","id":171,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Lucia Khoury","b":"1970-08-11","e":"lucia.khoury90@example.com","c":"500000139","r":"UAE","k":["Open Water Diver"],"kd":["2017-02"],"lv":4,"f":"2017-02","l":"2017-02","g":[0],"y":"2017","id":172,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Anya Reeves","b":"24.06.2000","e":"anya.reeves48@example.com","c":"500000140","r":"Italy","k":["Open Water Diver"],"kd":["2024-04"],"lv":4,"f":"2024-04","l":"2024-04","g":[0],"y":"2024","id":173,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Lucia Haddad","b":"1973-12-15","e":"lucia.haddad1@example.com","c":"500000141","r":"Germany","k":["Open Water Diver"],"kd":["2025-02"],"lv":4,"f":"2025-02","l":"2025-02","g":[1],"y":"2025","id":174,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Tanaka","b":"11.08.1976","e":"mateo.tanaka43@example.com","c":"500000142","r":"Lebanon","k":["Junior Open Water Diver"],"kd":["2018-03"],"lv":4,"f":"2018-03","l":"2018-03","g":[1],"y":"2018","id":175,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Tara Costa","b":"1992-11-03","e":"tara.costa63@example.com","c":"500000143","r":"South Africa","k":["Open Water Diver"],"kd":["2025-12"],"lv":4,"f":"2025-12","l":"2025-12","g":[1],"y":"2025","id":176,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Emma Costa","b":"11.09.1976","e":"emma.costa35@example.com","c":"500000144","r":"Pakistan","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":177,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Omar Sharma","b":"1968-12-05","e":"omar.sharma85@example.com","c":"","r":"Lebanon","k":["Scuba Diver"],"kd":["2022-04"],"lv":3,"f":"2022-04","l":"2022-04","g":[0],"y":"2022","id":178,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Zara Nasser","b":"28.11.2004","e":"zara.nasser30@example.com","c":"500000145","r":"","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":179,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Nikolai Iyer","b":"24.11.1982","e":"nikolai.iyer97@example.com","c":"500000146","r":"UAE","k":["Open Water Diver"],"kd":["2015-06"],"lv":4,"f":"2015-06","l":"2015-06","g":[1],"y":"2015","id":180,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Hana Roux","b":"10.12.1983","e":"hana.roux59@example.com","c":"500000147","r":"Germany","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2023-05","2024-05"],"lv":5,"f":"2023-05","l":"2024-05","g":[1],"y":"2024","id":181,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Elena Novak","b":"1987-09-12","e":"","c":"500000148","r":"","k":["Junior Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2023-09","2024-11","2024-12"],"lv":5.5,"f":"2023-09","l":"2024-12","g":[2],"y":"2024","id":182,"dup":0,"tr":"HOLD","gr":"B"},{"n":"Sofia Stone","b":"1985-10-01","e":"sofia.stone4@example.com","c":"","r":"Pakistan","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2022-02","2022-12"],"lv":5,"f":"2022-02","l":"2022-12","g":[1],"y":"2022","id":183,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Dev Silva","b":"2010-05-10","e":"dev.silva12@example.com","c":"0000","r":"","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":184,"dup":0,"tr":"TRUSTED","gr":"D"},{"n":"Salma Mansour","b":"23.12.1983","e":"salma.mansour99@example.com","c":"500000150","r":"UAE","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":185,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Isla Fraser","b":"05.10.2002","e":"isla.fraser97@example.com","c":"500000151","r":"Philippines","k":["Open Water Diver"],"kd":["2016-03"],"lv":4,"f":"2016-03","l":"2016-03","g":[0],"y":"2016","id":186,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nikolai Keller","b":"15.10.2002","e":"nikolai.keller88@example.com","c":"","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2021-01","2021-03"],"lv":5,"f":"2021-01","l":"2021-03","g":[1],"y":"2021","id":187,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Olivia Nair","b":"2001-06-20","e":"olivia.nair71@example.com","c":"500000152","r":"UAE","k":["Open Water Diver"],"kd":["2020-09"],"lv":4,"f":"2020-09","l":"2020-09","g":[0],"y":"2020","id":188,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Arjun Lambert","b":"11.07.2003","e":"","c":"500000153","r":"Philippines","k":["Junior Open Water Diver"],"kd":["2016-08"],"lv":4,"f":"2016-08","l":"2016-08","g":[1],"y":"2016","id":189,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Freya Tanaka","b":"1983-05-15","e":"freya.tanaka26@example.com","c":"500000154","r":"","k":["Open Water Diver"],"kd":["2021-04"],"lv":4,"f":"2021-04","l":"2021-04","g":[1],"y":"2021","id":190,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Camille Hartley","b":"25.06.1972","e":"","c":"500000155","r":"Russia","k":["Open Water Diver"],"kd":["2017-05"],"lv":4,"f":"2017-05","l":"2017-05","g":[0],"y":"2017","id":191,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Olivia Rahman","b":"28.04.1984","e":"olivia.rahman64@example.com","c":"500000156","r":"","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2018-02","2018-12","2019-01"],"lv":5.5,"f":"2018-02","l":"2019-01","g":[2],"y":"2019","id":192,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Finn Marlow","b":"01.05.1988","e":"finn.marlow93@example.com","c":"500000157","r":"Pakistan","k":["Junior Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["","","",""],"lv":6,"f":"","l":"","g":[4],"y":"","id":193,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Karim Iyer","b":"28.01.2011","e":"karim.iyer10@example.com","c":"","r":"South Africa","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":194,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Lucas Rao","b":"1981-01-10","e":"lucas.rao79@example.com","c":"500000158","r":"Pakistan","k":["Junior Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2019-04","2019-06","2019-11","2020-09"],"lv":6,"f":"2019-04","l":"2020-09","g":[4],"y":"2020","id":195,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Aisha Doyle","b":"1998-10-06","e":"","c":"500000159","r":"South Africa","k":["Junior Open Water Diver"],"kd":["2021-12"],"lv":4,"f":"2021-12","l":"2021-12","g":[0],"y":"2021","id":196,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Finn Ibrahim","b":"02.10.1999","e":"finn.ibrahim22@example.com","c":"500000160","r":"Italy","k":["Junior Open Water Diver"],"kd":["2026-05"],"lv":4,"f":"2026-05","l":"2026-05","g":[0],"y":"2026","id":197,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mia Lambert","b":"2000-12-23","e":"mia.lambert44@example.com","c":"","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["","","",""],"lv":6,"f":"","l":"","g":[4],"y":"","id":198,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Greta Nair","b":"2010-04-24","e":"greta.nair41@example.com","c":"500000161","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2023-11","2024-02"],"lv":5,"f":"2023-11","l":"2024-02","g":[1],"y":"2024","id":199,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Liam Khoury","b":"1985-06-26","e":"liam.khoury21@example.com","c":"","r":"India","k":["Open Water Diver"],"kd":["2023-11"],"lv":4,"f":"2023-11","l":"2023-11","g":[0],"y":"2023","id":200,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Niamh Iyer","b":"02.06.2018","e":"niamh.iyer29@example.com","c":"500000162","r":"UK","k":["Bubblemaker (Kids Intro)","PADI Seal Team (Junior)"],"kd":["",""],"lv":2,"f":"","l":"","g":[3],"y":"","id":201,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Zara Lambert","b":"02.10.1982","e":"","c":"500000163","r":"Pakistan","k":["Open Water Diver"],"kd":["2021-08"],"lv":4,"f":"2021-08","l":"2021-08","g":[0],"y":"2021","id":202,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Carla Petrov","b":"1987-02-14","e":"carla.petrov31@example.com","c":"500000164","r":"Philippines","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2016-09","2017-02","2017-08"],"lv":5.5,"f":"2016-09","l":"2017-08","g":[2],"y":"2017","id":203,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Liam Lim","b":"27.08.1973","e":"liam.lim73@example.com","c":"","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2022-07","2022-12"],"lv":5,"f":"2022-07","l":"2022-12","g":[1],"y":"2022","id":204,"dup":0,"tr":"GAPS","gr":"C"},{"n":"Diego Whitfield","b":"04.02.2004","e":"diego.whitfield50@example.com","c":"500000165","r":"Pakistan","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2019-03","2019-10","2020-07","2020-09","2021-09"],"lv":7,"f":"2019-03","l":"2021-09","g":[4],"y":"2021","id":205,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Noah Patel","b":"24.06.1987","e":"","c":"500000166","r":"South Africa","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":206,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Meera Lim","b":"21.06.1992","e":"meera.lim22@example.com","c":"500000167","r":"South Africa","k":["Junior Open Water Diver"],"kd":["2017-09"],"lv":4,"f":"2017-09","l":"2017-09","g":[0],"y":"2017","id":207,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Iyer","b":"03.01.1990","e":"diego.iyer40@example.com","c":"500000168","r":"South Africa","k":["Open Water Diver"],"kd":["2014-02"],"lv":4,"f":"2014-02","l":"2014-02","g":[0],"y":"2014","id":208,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Mei Kovacs","b":"10.12.1993","e":"mei.kovacs93@example.com","c":"500000169","r":"UAE","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["",""],"lv":5,"f":"","l":"","g":[1],"y":"","id":209,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Kenji Patel","b":"1999-03-17","e":"kenji.patel74@example.com","c":"500000170","r":"Russia","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["","",""],"lv":5.5,"f":"","l":"","g":[2],"y":"","id":210,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Mei Ortega","b":"1990-11-24","e":"","c":"500000171","r":"","k":["Junior Open Water Diver"],"kd":["2023-05"],"lv":4,"f":"2023-05","l":"2023-05","g":[1],"y":"2023","id":211,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Kenji Volkov","b":"27.02.1987","e":"kenji.volkov93@example.com","c":"500000172","r":"Germany","k":["Open Water Diver"],"kd":["2018-04"],"lv":4,"f":"2018-04","l":"2018-04","g":[1],"y":"2018","id":212,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mei Ashby","b":"01.08.1978","e":"","c":"500000173","r":"UAE","k":["Scuba Diver"],"kd":[""],"lv":3,"f":"","l":"","g":[0],"y":"","id":213,"dup":0,"tr":"HOLD","gr":"B"},{"n":"Greta Ellis","b":"1994-12-07","e":"greta.ellis98@example.com","c":"500000174","r":"","k":["Open Water Diver"],"kd":["2021-07"],"lv":4,"f":"2021-07","l":"2021-07","g":[0],"y":"2021","id":214,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Niamh Keller","b":"16.11.1976","e":"niamh.keller61@example.com","c":"500000175","r":"Philippines","k":["Open Water Diver"],"kd":["2017-02"],"lv":4,"f":"2017-02","l":"2017-02","g":[1],"y":"2017","id":215,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Isla Iyer","b":"01.02.2016","e":"isla.iyer69@example.com","c":"500000176","r":"UAE","k":["Bubblemaker (Kids Intro)","PADI Seal Team (Junior)"],"kd":["2015-03","2016-04"],"lv":2,"f":"2015-03","l":"2016-04","g":[3],"y":"2016","id":216,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Karim Costa","b":"11.03.1991","e":"karim.costa99@example.com","c":"500000177","r":"India","k":["Open Water Diver"],"kd":["2022-10"],"lv":4,"f":"2022-10","l":"2022-10","g":[0],"y":"2022","id":217,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Anya Moreno","b":"2002-05-06","e":"anya.moreno90@example.com","c":"500000178","r":"UAE","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":218,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nadia Okafor","b":"1987-03-12","e":"nadia.okafor15@example.com","c":"500000179","r":"Russia","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["2026-12","2026-10","2026-10"],"lv":5.5,"f":"2026-12","l":"2026-10","g":[2],"y":"2026","id":219,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Quinn","b":"05.10.1988","e":"mateo.quinn27@example.com","c":"500000180","r":"UAE","k":["Open Water Diver"],"kd":["2019-01"],"lv":4,"f":"2019-01","l":"2019-01","g":[0],"y":"2019","id":220,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Zara Fraser","b":"26.05.1992","e":"zara.fraser69@example.com","c":"500000181","r":"","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2021-06","2021-08"],"lv":5,"f":"2021-06","l":"2021-08","g":[1],"y":"2021","id":221,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Aisha Silva","b":"05.11.1970","e":"aisha.silva22@example.com","c":"500000182","r":"South Africa","k":["Junior Open Water Diver"],"kd":["2020-03"],"lv":4,"f":"2020-03","l":"2020-03","g":[0],"y":"2020","id":222,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Niamh Quinn","b":"19.06.2000","e":"","c":"0000","r":"Germany","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":223,"dup":0,"tr":"GAPS","gr":"D"},{"n":"Noah Marlow","b":"01.05.1970","e":"noah.marlow53@example.com","c":"500000184","r":"UAE","k":["Junior Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2022-02","2023-03","2023-09"],"lv":5.5,"f":"2022-02","l":"2023-09","g":[2],"y":"2023","id":224,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Priya Stone","b":"2003-02-01","e":"priya.stone93@example.com","c":"","r":"","k":["Open Water Diver"],"kd":["2021-04"],"lv":4,"f":"2021-04","l":"2021-04","g":[0],"y":"2021","id":225,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Freya Marlow","b":"16.03.1982","e":"freya.marlow98@example.com","c":"","r":"UAE","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":226,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Tomas Farah","b":"1968-03-18","e":"tomas.farah47@example.com","c":"500000185","r":"UAE","k":["Open Water Diver"],"kd":["2024-04"],"lv":4,"f":"2024-04","l":"2024-04","g":[1],"y":"2024","id":227,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Ravi Petrov","b":"15.03.2000","e":"ravi.petrov17@example.com","c":"500000186","r":"UK","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2024-05","2024-06","2025-05"],"lv":5.5,"f":"2024-05","l":"2025-05","g":[2],"y":"2025","id":228,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Lucia Moreno","b":"10.11.1986","e":"","c":"500000187","r":"South Africa","k":["Open Water Diver"],"kd":["2020-05"],"lv":4,"f":"2020-05","l":"2020-05","g":[1],"y":"2020","id":229,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Salma Ortega","b":"11.07.1997","e":"","c":"500000188","r":"","k":["Open Water Diver"],"kd":["2016-01"],"lv":4,"f":"2016-01","l":"2016-01","g":[0],"y":"2016","id":230,"dup":0,"tr":"TRUSTED","gr":"B"},{"n":"Priya Rao","b":"19.04.2002","e":"priya.rao54@example.com","c":"500000189","r":"France","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2019-03","2020-02","2021-01","2022-02"],"lv":6,"f":"2019-03","l":"2022-02","g":[4],"y":"2022","id":231,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Jamal Berg","b":"1971-03-26","e":"jamal.berg68@example.com","c":"500000190","r":"Philippines","k":["Open Water Diver"],"kd":["2025-08"],"lv":4,"f":"2025-08","l":"2025-08","g":[0],"y":"2025","id":232,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Mei Haddad","b":"1990-02-12","e":"mei.haddad23@example.com","c":"500000191","r":"South Africa","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2020-07","2020-08","2021-01"],"lv":5.5,"f":"2020-07","l":"2021-01","g":[2],"y":"2021","id":233,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Finn Tan","b":"2002-04-12","e":"finn.tan54@example.com","c":"","r":"Philippines","k":["Open Water Diver"],"kd":["2022-10"],"lv":4,"f":"2022-10","l":"2022-10","g":[1],"y":"2022","id":234,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Callum Tan","b":"05.02.1981","e":"callum.tan91@example.com","c":"500000192","r":"Lebanon","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["","",""],"lv":5.5,"f":"","l":"","g":[2],"y":"","id":235,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Sofia Sharma","b":"1978-11-25","e":"sofia.sharma48@example.com","c":"500000193","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2020-11","2021-07"],"lv":5,"f":"2020-11","l":"2021-07","g":[1],"y":"2021","id":236,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Niamh Hartley","b":"1980-06-04","e":"niamh.hartley20@example.com","c":"500000194","r":"Egypt","k":["Junior Open Water Diver"],"kd":["2024-02"],"lv":4,"f":"2024-02","l":"2024-02","g":[1],"y":"2024","id":237,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Hana Reeves","b":"03.10.1975","e":"hana.reeves78@example.com","c":"500000195","r":"UAE","k":["Junior Open Water Diver"],"kd":["2016-09"],"lv":4,"f":"2016-09","l":"2016-09","g":[0],"y":"2016","id":238,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mia Reeves","b":"1993-02-02","e":"mia.reeves14@example.com","c":"","r":"Egypt","k":["Open Water Diver"],"kd":["2016-02"],"lv":4,"f":"2016-02","l":"2016-02","g":[1],"y":"2016","id":239,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Rohan Volkov","b":"17.01.1998","e":"rohan.volkov25@example.com","c":"0000","r":"Italy","k":["Open Water Diver"],"kd":["2016-03"],"lv":4,"f":"2016-03","l":"2016-03","g":[1],"y":"2016","id":240,"dup":0,"tr":"TRUSTED","gr":"D"},{"n":"Noah Lim","b":"1999-04-08","e":"noah.lim41@example.com","c":"","r":"UAE","k":["Open Water Diver"],"kd":["2026-03"],"lv":4,"f":"2026-03","l":"2026-03","g":[1],"y":"2026","id":241,"dup":0,"tr":"REVIEW","gr":"C"},{"n":"Ava Tanaka","b":"1991-05-24","e":"ava.tanaka63@example.com","c":"500000197","r":"Egypt","k":["Scuba Diver"],"kd":[""],"lv":3,"f":"","l":"","g":[0],"y":"","id":242,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Tan","b":"25.07.1997","e":"","c":"","r":"Lebanon","k":["Open Water Diver"],"kd":["2024-02"],"lv":4,"f":"2024-02","l":"2024-02","g":[1],"y":"2024","id":243,"dup":0,"tr":"TRUSTED","gr":"E"},{"n":"Mateo Haddad","b":"1994-12-13","e":"","c":"500000198","r":"Pakistan","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2018-12","2019-08"],"lv":5,"f":"2018-12","l":"2019-08","g":[1],"y":"2019","id":244,"dup":0,"tr":"REVIEW","gr":"B"},{"n":"Finn Nair","b":"09.03.1999","e":"finn.nair53@example.com","c":"500000199","r":"Egypt","k":["Junior Open Water Diver"],"kd":["2015-08"],"lv":4,"f":"2015-08","l":"2015-08","g":[0],"y":"2015","id":245,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Finn Silva","b":"1979-03-26","e":"finn.silva34@example.com","c":"500000200","r":"Russia","k":["Junior Open Water Diver"],"kd":["2025-11"],"lv":4,"f":"2025-11","l":"2025-11","g":[0],"y":"2025","id":246,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Fraser","b":"1976-01-18","e":"carla.fraser46@example.com","c":"500000201","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["","","",""],"lv":6,"f":"","l":"","g":[4],"y":"","id":247,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Liam Chowdhury","b":"1975-02-12","e":"","c":"","r":"Egypt","k":["Open Water Diver"],"kd":["2018-01"],"lv":4,"f":"2018-01","l":"2018-01","g":[0],"y":"2018","id":248,"dup":0,"tr":"TRUSTED","gr":"E"},{"n":"Greta Silva","b":"1985-03-02","e":"greta.silva70@example.com","c":"500000202","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["","",""],"lv":5.5,"f":"","l":"","g":[2],"y":"","id":249,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Hugo Quinn","b":"1982-12-24","e":"hugo.quinn12@example.com","c":"500000203","r":"UAE","k":["Open Water Diver"],"kd":["2020-08"],"lv":4,"f":"2020-08","l":"2020-08","g":[1],"y":"2020","id":250,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Isla Said","b":"05.03.1990","e":"isla.said29@example.com","c":"500000204","r":"UAE","k":["Open Water Diver"],"kd":["2025-10"],"lv":4,"f":"2025-10","l":"2025-10","g":[1],"y":"2025","id":251,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Sofia Brandt","b":"1972-02-21","e":"sofia.brandt44@example.com","c":"","r":"Lebanon","k":["Junior Open Water Diver"],"kd":["2017-07"],"lv":4,"f":"2017-07","l":"2017-07","g":[1],"y":"2017","id":252,"dup":0,"tr":"REVIEW","gr":"C"},{"n":"Hugo Tanaka","b":"1981-04-05","e":"","c":"500000205","r":"Egypt","k":["Junior Open Water Diver"],"kd":["2019-05"],"lv":4,"f":"2019-05","l":"2019-05","g":[1],"y":"2019","id":253,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Priya Marlow","b":"01.01.1985","e":"","c":"500000206","r":"Philippines","k":["Open Water Diver"],"kd":["2021-09"],"lv":4,"f":"2021-09","l":"2021-09","g":[0],"y":"2021","id":254,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Jonas Brandt","b":"09.07.2009","e":"jonas.brandt56@example.com","c":"500000207","r":"Italy","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2022-09","2023-09"],"lv":5,"f":"2022-09","l":"2023-09","g":[1],"y":"2023","id":255,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Anika Stone","b":"10.12.1989","e":"anika.stone56@example.com","c":"500000208","r":"UAE","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[1],"y":"","id":256,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Priya Okafor","b":"01.03.1983","e":"priya.okafor5@example.com","c":"","r":"UAE","k":["Junior Open Water Diver"],"kd":["2025-04"],"lv":4,"f":"2025-04","l":"2025-04","g":[0],"y":"2025","id":257,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Anya Farah","b":"01.07.1969","e":"anya.farah56@example.com","c":"0000","r":"UAE","k":["Emergency First Response"],"kd":[""],"lv":0,"f":"","l":"","g":[3],"y":"","id":258,"dup":0,"tr":"TRUSTED","gr":"D"},{"n":"Chen Rao","b":"24.08.1984","e":"chen.rao97@example.com","c":"","r":"Germany","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2017-12","2019-01"],"lv":5,"f":"2017-12","l":"2019-01","g":[1],"y":"2019","id":259,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Mei Mansour","b":"03.12.1990","e":"mei.mansour87@example.com","c":"500000210","r":"UAE","k":["Open Water Diver"],"kd":["2020-10"],"lv":4,"f":"2020-10","l":"2020-10","g":[0],"y":"2020","id":260,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Carla Lambert","b":"28.05.1970","e":"carla.lambert46@example.com","c":"500000211","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2024-02","2024-08"],"lv":5,"f":"2024-02","l":"2024-08","g":[1],"y":"2024","id":261,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Priya Bishop","b":"01.04.1983","e":"priya.bishop44@example.com","c":"500000212","r":"India","k":["Open Water Diver"],"kd":["2018-02"],"lv":4,"f":"2018-02","l":"2018-02","g":[0],"y":"2018","id":262,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Omar Chowdhury","b":"1977-02-16","e":"omar.chowdhury90@example.com","c":"500000213","r":"France","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2019-10","2020-06","2020-12","2021-08","2022-06"],"lv":7,"f":"2019-10","l":"2022-06","g":[4],"y":"2022","id":263,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Kenji Reeves","b":"1981-08-28","e":"kenji.reeves78@example.com","c":"500000214","r":"Italy","k":["Emergency First Response"],"kd":["2021-06"],"lv":0,"f":"2021-06","l":"2021-06","g":[3],"y":"2021","id":264,"dup":0,"tr":"REVIEW","gr":"A"},{"n":"Arjun Ibrahim","b":"10.02.1975","e":"","c":"500000215","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2015-02","2015-11"],"lv":5,"f":"2015-02","l":"2015-11","g":[1],"y":"2015","id":265,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Rohan Delgado","b":"1983-11-05","e":"rohan.delgado59@example.com","c":"500000216","r":"Philippines","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2020-11","2021-06"],"lv":5,"f":"2020-11","l":"2021-06","g":[1],"y":"2021","id":266,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Freya Lambert","b":"21.04.1986","e":"freya.lambert21@example.com","c":"500000217","r":"France","k":["Open Water Diver"],"kd":["2023-11"],"lv":4,"f":"2023-11","l":"2023-11","g":[0],"y":"2023","id":267,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Lucas Lim","b":"26.02.1979","e":"lucas.lim96@example.com","c":"500000218","r":"UAE","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":268,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Aisha Brandt","b":"1968-09-27","e":"aisha.brandt32@example.com","c":"500000219","r":"Egypt","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["2025-12","2026-01","2026-03"],"lv":5.5,"f":"2025-12","l":"2026-03","g":[2],"y":"2026","id":269,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Pablo Ortega","b":"21.11.1999","e":"","c":"500000220","r":"France","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2023-12","2024-12"],"lv":5,"f":"2023-12","l":"2024-12","g":[1],"y":"2024","id":270,"dup":0,"tr":"REVIEW","gr":"B"},{"n":"Diego Fraser","b":"2004-03-23","e":"diego.fraser43@example.com","c":"500000221","r":"Philippines","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2024-05","2025-04"],"lv":5,"f":"2024-05","l":"2025-04","g":[1],"y":"2025","id":271,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Freya Fraser","b":"1973-03-03","e":"freya.fraser93@example.com","c":"","r":"India","k":["Open Water Diver"],"kd":["2019-02"],"lv":4,"f":"2019-02","l":"2019-02","g":[0],"y":"2019","id":272,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Anya Khoury","b":"22.10.1994","e":"anya.khoury99@example.com","c":"500000222","r":"UAE","k":["Emergency First Response"],"kd":["2019-10"],"lv":0,"f":"2019-10","l":"2019-10","g":[3],"y":"2019","id":273,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Tara Nasser","b":"1991-01-05","e":"tara.nasser71@example.com","c":"500000223","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver","Divemaster"],"kd":["2026-01","2026-07","2026-08","2026-10","2026-12"],"lv":7,"f":"2026-01","l":"2026-12","g":[4],"y":"2026","id":274,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Arjun Marlow","b":"04.06.1981","e":"arjun.marlow28@example.com","c":"500000224","r":"UAE","k":["Open Water Diver"],"kd":["2018-08"],"lv":4,"f":"2018-08","l":"2018-08","g":[1],"y":"2018","id":275,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Yuki Duarte","b":"09.01.2014","e":"yuki.duarte28@example.com","c":"500000225","r":"UAE","k":["Bubblemaker (Kids Intro)"],"kd":[""],"lv":1,"f":"","l":"","g":[3],"y":"","id":276,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Freya Khoury","b":"1992-01-20","e":"freya.khoury92@example.com","c":"500000226","r":"UAE","k":["Open Water Diver"],"kd":["2025-04"],"lv":4,"f":"2025-04","l":"2025-04","g":[0],"y":"2025","id":277,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mateo Sharma","b":"1986-02-21","e":"mateo.sharma28@example.com","c":"","r":"Pakistan","k":["Open Water Diver","Advanced Open Water Diver","Wreck Diver"],"kd":["2019-06","2019-09","2020-06"],"lv":5.5,"f":"2019-06","l":"2020-06","g":[2],"y":"2020","id":278,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Yusuf Iyer","b":"06.02.1988","e":"yusuf.iyer98@example.com","c":"500000227","r":"UK","k":["Open Water Diver"],"kd":["2017-05"],"lv":4,"f":"2017-05","l":"2017-05","g":[0],"y":"2017","id":279,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Hugo Said","b":"1985-12-24","e":"hugo.said46@example.com","c":"500000228","r":"UAE","k":["Junior Open Water Diver"],"kd":["2021-09"],"lv":4,"f":"2021-09","l":"2021-09","g":[0],"y":"2021","id":280,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Mia Okafor","b":"1978-11-08","e":"mia.okafor14@example.com","c":"500000229","r":"Pakistan","k":["Open Water Diver"],"kd":["2023-04"],"lv":4,"f":"2023-04","l":"2023-04","g":[1],"y":"2023","id":281,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Elena Khoury","b":"20.05.2014","e":"elena.khoury57@example.com","c":"","r":"Italy","k":["Bubblemaker (Kids Intro)"],"kd":["2021-11"],"lv":1,"f":"2021-11","l":"2021-11","g":[3],"y":"2021","id":282,"dup":0,"tr":"TRUSTED","gr":"C"},{"n":"Salma Berg","b":"2014-09-21","e":"","c":"500000230","r":"UAE","k":["Bubblemaker (Kids Intro)"],"kd":[""],"lv":1,"f":"","l":"","g":[3],"y":"","id":283,"dup":0,"tr":"GAPS","gr":"B"},{"n":"Layla Ashby","b":"14.06.1990","e":"layla.ashby88@example.com","c":"500000231","r":"Philippines","k":["Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":284,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Priya Moreno","b":"02.01.1998","e":"priya.moreno50@example.com","c":"500000232","r":"UAE","k":["Open Water Diver"],"kd":["2025-11"],"lv":4,"f":"2025-11","l":"2025-11","g":[1],"y":"2025","id":285,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mia Ortega","b":"1996-01-09","e":"mia.ortega45@example.com","c":"500000233","r":"UAE","k":["Junior Open Water Diver"],"kd":["2021-08"],"lv":4,"f":"2021-08","l":"2021-08","g":[1],"y":"2021","id":286,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Nadia Silva","b":"27.02.1971","e":"nadia.silva48@example.com","c":"500000234","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2017-06","2017-09"],"lv":5,"f":"2017-06","l":"2017-09","g":[1],"y":"2017","id":287,"dup":0,"tr":"GAPS","gr":"A"},{"n":"Hugo Patel","b":"15.10.1990","e":"hugo.patel97@example.com","c":"500000235","r":"UAE","k":["Open Water Diver"],"kd":["2022-02"],"lv":4,"f":"2022-02","l":"2022-02","g":[1],"y":"2022","id":288,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Tomas Costa","b":"05.07.2009","e":"tomas.costa97@example.com","c":"500000236","r":"Russia","k":["Junior Open Water Diver"],"kd":["2017-09"],"lv":4,"f":"2017-09","l":"2017-09","g":[0],"y":"2017","id":289,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Callum Ibrahim","b":"1973-10-01","e":"callum.ibrahim4@example.com","c":"500000237","r":"UAE","k":["Junior Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2022-07","2022-11","2024-01"],"lv":5.5,"f":"2022-07","l":"2024-01","g":[2],"y":"2024","id":290,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Mia Keller","b":"2002-06-17","e":"mia.keller64@example.com","c":"500000238","r":"","k":["Open Water Diver"],"kd":["2024-03"],"lv":4,"f":"2024-03","l":"2024-03","g":[1],"y":"2024","id":291,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Priya Keller","b":"01.12.1969","e":"priya.keller96@example.com","c":"500000239","r":"France","k":["Open Water Diver"],"kd":["2019-10"],"lv":4,"f":"2019-10","l":"2019-10","g":[0],"y":"2019","id":292,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Sofia Silva","b":"22.11.2003","e":"sofia.silva11@example.com","c":"0000","r":"","k":["Open Water Diver","Advanced Open Water Diver","Emergency First Response","Rescue Diver"],"kd":["2017-05","2017-08","2018-03","2019-01"],"lv":6,"f":"2017-05","l":"2019-01","g":[4],"y":"2019","id":293,"dup":0,"tr":"REVIEW","gr":"D"},{"n":"Finn Duarte","b":"1968-10-25","e":"finn.duarte11@example.com","c":"500000241","r":"UAE","k":["Open Water Diver","Advanced Open Water Diver","Deep Diver Specialty"],"kd":["","",""],"lv":5.5,"f":"","l":"","g":[2],"y":"","id":294,"dup":0,"tr":"HOLD","gr":"A"},{"n":"Noah Tan","b":"1991-10-26","e":"noah.tan89@example.com","c":"500000242","r":"India","k":["Open Water Diver","Advanced Open Water Diver"],"kd":["2017-01","2017-03"],"lv":5,"f":"2017-01","l":"2017-03","g":[1],"y":"2017","id":295,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Diego Khoury","b":"1976-07-11","e":"diego.khoury3@example.com","c":"500000243","r":"UAE","k":["Junior Open Water Diver","Advanced Open Water Diver"],"kd":["2024-07","2025-03"],"lv":5,"f":"2024-07","l":"2025-03","g":[1],"y":"2025","id":296,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Kenji Tanaka","b":"13.09.1976","e":"kenji.tanaka72@example.com","c":"500000244","r":"India","k":["Open Water Diver"],"kd":["2024-05"],"lv":4,"f":"2024-05","l":"2024-05","g":[1],"y":"2024","id":297,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Noah Iyer","b":"1983-03-16","e":"noah.iyer30@example.com","c":"500000245","r":"Italy","k":["Junior Open Water Diver"],"kd":[""],"lv":4,"f":"","l":"","g":[0],"y":"","id":298,"dup":0,"tr":"TRUSTED","gr":"A"},{"n":"Hana Menon","b":"22.12.1971","e":"hana.menon55@example.com","c":"","r":"South Africa","k":["Open Water Diver","Advanced Open Water Diver","Enriched Air (Nitrox) Diver"],"kd":["2023-09","2024-08","2025-06"],"lv":5.5,"f":"2023-09","l":"2025-06","g":[2],"y":"2025","id":299,"dup":0,"tr":"TRUSTED","gr":"C"}]}</script><script>
+(function(){
+  var KEY='bluereef_hub_demo_db_v1', store={}, subs=[];
+  try{ store=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ store={}; }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+  function clone(o){ return o===undefined?undefined:JSON.parse(JSON.stringify(o)); }
+  function col(c){ return store[c]||(store[c]={}); }
+  function notify(c){ subs.slice().forEach(function(s){ if(s.col===c) s.fire(); }); }
+  function docRef(c,id){
+    return {
+      get:function(){ var v=col(c)[id]; return Promise.resolve({exists:v!==undefined, data:function(){return clone(v);}}); },
+      set:function(d){ col(c)[id]=clone(d); save(); notify(c); return Promise.resolve(); },
+      update:function(d){ col(c)[id]=Object.assign({}, col(c)[id]||{}, clone(d)); save(); notify(c); return Promise.resolve(); },
+      delete:function(){ delete col(c)[id]; save(); notify(c); return Promise.resolve(); },
+      onSnapshot:function(cb){ var s={col:c, fire:function(){ var v=col(c)[id]; cb({exists:v!==undefined, data:function(){return clone(v);}}); }}; subs.push(s); setTimeout(s.fire,0); return function(){ subs.splice(subs.indexOf(s),1); }; }
+    };
+  }
+  function collection(c){
+    var q={f:null,d:'asc',lim:0};
+    function snap(){
+      var docs=Object.keys(col(c)).map(function(id){ return {id:id, data:function(){ return clone(col(c)[id]); }}; });
+      if(q.f){ docs.sort(function(a,b){ var x=a.data()[q.f]||'', y=b.data()[q.f]||''; var r=x>y?1:(x<y?-1:0); return q.d==='desc'?-r:r; }); }
+      if(q.lim) docs=docs.slice(0,q.lim);
+      return {docs:docs};
+    }
+    var api={
+      orderBy:function(f,d){ q.f=f; q.d=d||'asc'; return api; },
+      limit:function(n){ q.lim=n; return api; },
+      onSnapshot:function(cb){ var s={col:c, fire:function(){ cb(snap()); }}; subs.push(s); setTimeout(s.fire,0); return function(){ subs.splice(subs.indexOf(s),1); }; },
+      add:function(d){ var id='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); col(c)[id]=clone(d); save(); notify(c); return Promise.resolve({id:id}); },
+      doc:function(id){ return docRef(c,id); }
+    };
+    return api;
+  }
+  if(!store.meta || !store.meta.staff){ col('meta').staff={names:['Sam','Lina','Alex']}; save(); }
+  var db={ collection:collection, doc:function(p){ var a=p.split('/'); return docRef(a[0], a.slice(1).join('/')); } };
+  window.claude={ use:function(n){ return Promise.resolve(n==='db'?db:(n==='user'?{can:function(){return Promise.resolve(true);}}:null)); } };
+  window.resetDemoData=function(){ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); };
+})();
+</script>
+
+<script>
+const RAW = JSON.parse(document.getElementById('__data').textContent);
+const GROUPS = RAW.meta.groups;
+const LEGACY = RAW.students;
+const legacyById = {}; LEGACY.forEach(s=>legacyById[s.id]=s);
+
+/* ---------- banners (replaces alert()) ---------- */
+function banner(msg, type){
+  const el = document.createElement('div');
+  el.className = 'banner' + (type?(' '+type):'');
+  el.textContent = msg;
+  document.getElementById('bannerStack').appendChild(el);
+  setTimeout(()=>{ el.remove(); }, 5000);
+}
+
+const LEVEL_INFO = {
+  0:{label:'On file', cls:'lv0', next:'Course history on file — reach out to confirm the right next step.'},
+  1:{label:'Bubblemaker', cls:'lv1', next:'Ready to move up to PADI Seal Team once old enough (age 8+).'},
+  2:{label:'Seal Team', cls:'lv2', next:'Next up: PADI Master Seal Team, then Junior Open Water Diver at age 10.'},
+  3:{label:'Scuba Diver / Master Seal Team', cls:'lv3', next:'Ready to complete the full Open Water Diver certification.'},
+  4:{label:'Open Water Diver', cls:'lv4', next:'Ready for Advanced Open Water Diver — deep diving, navigation & more.'},
+  5:{label:'Advanced Open Water', cls:'lv5', next:'Great candidate for Rescue Diver (pair with EFR) — the next step toward pro-level diving.'},
+  5.5:{label:'Specialty Diver', cls:'lv55', next:'Has a specialty cert — a great time to work toward Rescue Diver or Master Scuba Diver.'},
+  6:{label:'Rescue Diver', cls:'lv6', next:'Qualified to start the Divemaster program — the first step into professional diving.'},
+  7:{label:'Divemaster', cls:'lv7', next:'Ready for the Instructor Development Course (IDC) to become a PADI Instructor.'},
+};
+function levelInfo(lv){ return LEVEL_INFO[lv] || LEVEL_INFO[0]; }
+const TRUST_LABEL = {TRUSTED:'Good', GAPS:'Good, with gaps', REVIEW:'Needs review', HOLD:'On hold'};
+const GR_LABEL = {A:'Phone + email', B:'Phone only', C:'Email only', D:'Invalid phone', E:'No contact'};
+const COURSE_OPTIONS = [
+  ['Bubblemaker (Kids Intro)',1],['PADI Seal Team (Junior)',2],['PADI Master Seal Team (Junior)',3],
+  ['Scuba Diver',3],['Junior Open Water Diver',4],['Open Water Diver',4],['Advanced Open Water Diver',5],
+  ['Emergency First Response',5],['Enriched Air (Nitrox) Diver',5.5],['Wreck Diver',5.5],['Deep Diver Specialty',5.5],
+  ['Rescue Diver',6],['Divemaster',7],
+];
+function escapeHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function normPhone(p){ const d=(p||'').replace(/\D/g,''); return d.length>=7 ? d.slice(-8) : ''; }
+
+LEGACY.forEach(s=>{ s._h = (s.n+' '+s.e+' '+s.c+' '+s.k.join(' ')+' '+s.r).toLowerCase(); });
+const legacyPhoneIndex = {};
+LEGACY.forEach(s=>{ const p=normPhone(s.c); if(p){ (legacyPhoneIndex[p] = legacyPhoneIndex[p]||[]).push(s); } });
+
+/* ---------------- Live layer (db capability) ---------------- */
+let dbNS=null, userNS=null, canWrite=false;
+let liveEntries = [];
+let legacyContacts = {};
+let editsMap = {};        // 's'+id -> {n,b,e,c,r,editedBy,editedAt}
+let mergesMap = {};       // 's'+id -> {mergedInto, mergedBy, mergedAt}
+let verifyMap = {};       // id -> {identity,cert,phone,email,consent,verifiedBy,verifiedAt,campaignReady}
+let staffList = [];
+
+function mapEntryDoc(id, d){
+  return { n:d.n||'', b:d.b||'', e:d.e||'', c:d.c||'', r:d.r||'', k:d.k||[], kd:(d.k||[]).map(()=>d.y||''), lv:d.lv||0,
+    f:d.y? d.y+'-01':'', l:d.y? d.y+'-12':'', y:d.y||'', g:[], live:true, id:'live-'+id,
+    contacted: !!d.contacted, contactedBy:d.contactedBy||'', contactedAt:d.contactedAt||'', notes:d.notes||'',
+    addedBy:d.addedBy||'', addedAt:d.addedAt||'', dup:0, tr:'GAPS', gr:(d.e&&d.c)?'A':(d.c?'B':(d.e?'C':'E')),
+    _h:(d.n+' '+d.e+' '+d.c+' '+(d.k||[]).join(' ')+' '+d.r).toLowerCase() };
+}
+
+function displayRecord(base){
+  // apply edits overlay for legacy records
+  if(!base.live){
+    const e = editsMap['s'+base.id];
+    if(e){
+      base = Object.assign({}, base, {
+        n: e.n!==undefined && e.n!=='' ? e.n : base.n,
+        b: e.b!==undefined && e.b!=='' ? e.b : base.b,
+        e: e.e!==undefined && e.e!=='' ? e.e : base.e,
+        c: e.c!==undefined && e.c!=='' ? e.c : base.c,
+        r: e.r!==undefined && e.r!=='' ? e.r : base.r,
+        _edited: true,
+      });
+      base._h = (base.n+' '+base.e+' '+base.c+' '+base.k.join(' ')+' '+base.r).toLowerCase();
+    }
+  }
+  return base;
+}
+
+async function initDb(){
+  try{ dbNS = await claude.use('db'); userNS = await claude.use('user'); }catch(e){ dbNS=null; }
+  if(!dbNS){ render(); renderQueue(); renderReports(); return; }
+  try{ const can = userNS ? await userNS.can('data.write') : null; canWrite = can !== false; }catch(e){ canWrite = true; }
+  document.getElementById('addBtn').disabled = !canWrite;
+
+  dbNS.doc('meta/staff').onSnapshot(snap=>{
+    const d = snap.exists ? snap.data() : null;
+    staffList = (d && Array.isArray(d.names)) ? d.names : [];
+    renderStaffSelect(); renderStaffActivityFilter();
+  }, ()=>{});
+
+  dbNS.collection('entries').orderBy('addedAt','desc').limit(2000).onSnapshot(snap=>{
+    liveEntries = snap.docs.map(doc=>mapEntryDoc(doc.id, doc.data()));
+    render(); renderQueue(); renderReports();
+  }, ()=>{});
+
+  dbNS.collection('contacts').limit(3000).onSnapshot(snap=>{
+    const m={}; snap.docs.forEach(doc=>{ m[doc.id]=doc.data(); }); legacyContacts=m;
+    render(); renderReports();
+  }, ()=>{});
+
+  dbNS.collection('edits').limit(3000).onSnapshot(snap=>{
+    const m={}; snap.docs.forEach(doc=>{ m[doc.id]=doc.data(); }); editsMap=m;
+    render(); renderQueue();
+  }, ()=>{});
+
+  dbNS.collection('merges').limit(3000).onSnapshot(snap=>{
+    const m={}; snap.docs.forEach(doc=>{ m[doc.id]=doc.data(); }); mergesMap=m;
+    render(); renderQueue(); renderReports();
+  }, ()=>{});
+
+  dbNS.collection('verifications').limit(3000).onSnapshot(snap=>{
+    const m={}; snap.docs.forEach(doc=>{ m[doc.id]=doc.data(); }); verifyMap=m;
+    render(); renderQueue(); renderReports();
+  }, ()=>{});
+}
+
+function renderStaffSelect(){
+  const sel = document.getElementById('staffSelect');
+  const current = localStorage.getItem('abd_staff') || '';
+  sel.innerHTML = (staffList.length?staffList:['(no staff yet — click + New)']).map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  if(staffList.includes(current)) sel.value = current;
+  else if(staffList.length){ localStorage.setItem('abd_staff', staffList[0]); sel.value = staffList[0]; }
+}
+document.getElementById('staffSelect').addEventListener('change', e=>{ localStorage.setItem('abd_staff', e.target.value); });
+
+document.getElementById('staffAddBtn').addEventListener('click', ()=>{
+  modalBody.innerHTML = `
+    <button class="close-x" id="closeX">✕</button>
+    <h2>Add staff member</h2>
+    <div class="form-grid"><div class="full"><label>Name</label><input id="newStaffName" type="text" placeholder="e.g. Sara K."></div></div>
+    <div class="modal-actions"><button class="btn" id="saveStaffBtn">Save</button><button class="btn ghost" id="cancelStaffBtn">Cancel</button></div>
+  `;
+  document.getElementById('closeX').onclick = closeModal;
+  document.getElementById('cancelStaffBtn').onclick = closeModal;
+  document.getElementById('saveStaffBtn').onclick = async ()=>{
+    const name = document.getElementById('newStaffName').value.trim();
+    if(!name){ banner('Enter a name first.','err'); return; }
+    if(!dbNS){ banner("Live database isn't available in this view — staff list can't be saved.",'err'); return; }
+    try{
+      const ref = dbNS.doc('meta/staff');
+      const snap = await ref.get();
+      const names = (snap.exists && Array.isArray(snap.data().names)) ? snap.data().names.slice() : [];
+      if(!names.includes(name)) names.push(name);
+      if(snap.exists) await ref.update({names}); else await ref.set({names});
+      localStorage.setItem('abd_staff', name);
+      closeModal();
+      banner('Staff member added.','ok');
+    }catch(err){ banner('Could not save staff name: '+(err&&err.message||err),'err'); }
+  };
+  overlay.classList.add('show');
+});
+function currentStaff(){ return localStorage.getItem('abd_staff') || ''; }
+
+/* ---------------- Merge + derived helpers ---------------- */
+function allStudents(){
+  return LEGACY.filter(s=>!mergesMap['s'+s.id]).map(displayRecord)
+    .concat(liveEntries.filter(s=>!mergesMap[s.id]));
+}
+function getContactStatus(s){
+  if(s.live) return {contacted:!!s.contacted, by:s.contactedBy, at:s.contactedAt, notes:s.notes};
+  const c = legacyContacts['s'+s.id];
+  return c ? {contacted:!!c.contacted, by:c.by, at:c.at, notes:c.notes} : {contacted:false};
+}
+function getVerification(s){
+  const v = verifyMap[s.id];
+  return v || {identity:false, cert:false, phone:false, email:false, consent:'unknown', campaignReady:false};
+}
+function isCampaignReady(s){ return !!getVerification(s).campaignReady; }
+
+function refreshStats(){
+  const all = allStudents();
+  const totalCerts = all.reduce((a,s)=>a+s.k.length,0);
+  const readyForNext = all.filter(s=>s.lv>=3 && s.lv<7).length;
+  const verifiedCount = all.filter(isCampaignReady).length;
+  document.getElementById('statRow').innerHTML = `
+    <div class="stat"><b>${all.length.toLocaleString()}</b><span>Students on file</span></div>
+    <div class="stat"><b>${totalCerts.toLocaleString()}</b><span>Certifications logged</span></div>
+    <div class="stat"><b>${readyForNext.toLocaleString()}</b><span>Ready for a next course</span></div>
+    <div class="stat"><b>${liveEntries.length.toLocaleString()}</b><span>Added live</span></div>
+    <div class="stat"><b>${verifiedCount.toLocaleString()}</b><span>Ready to call</span></div>
+  `;
+}
+
+/* ---------------- Tabs ---------------- */
+document.querySelectorAll('.tabbar button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    ['students','queue','reports'].forEach(t=>{ document.getElementById('tab-'+t).style.display = (t===btn.dataset.tab)?'':'none'; });
+    if(btn.dataset.tab==='queue') renderQueue();
+    if(btn.dataset.tab==='reports') renderReports();
+  });
+});
+
+/* ---------------- Students tab filters ---------------- */
+const levelFilter = document.getElementById('levelFilter');
+levelFilter.innerHTML = '<option value="">All certification levels</option>' + [1,2,3,4,5,5.5,6,7].map(lv=>`<option value="${lv}">${levelInfo(lv).label}</option>`).join('');
+
+function buildYearFilter(){
+  const years = new Set(); allStudents().forEach(s=>{ if(s.y) years.add(s.y); });
+  const sorted = Array.from(years).sort().reverse();
+  const el = document.getElementById('yearFilter'); const prev = el.value;
+  el.innerHTML = '<option value="">All years</option>' + sorted.map(y=>`<option value="${y}">${y}</option>`).join('') + '<option value="__none">No date on file</option>';
+  if([...sorted,'__none',''].includes(prev)) el.value = prev;
+}
+function buildCountryFilter(){
+  const c = {}; allStudents().forEach(s=>{ const r=(s.r||'').trim(); if(r){ const k=r.toUpperCase(); c[k]=(c[k]||0)+1; }});
+  const top = Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,25).map(e=>e[0]);
+  const el = document.getElementById('countryFilter'); const prev = el.value;
+  el.innerHTML = '<option value="">All countries</option>' + top.map(k=>`<option value="${k}">${k} (${c[k]})</option>`).join('');
+  if(top.includes(prev)) el.value = prev;
+}
+function renderStaffActivityFilter(){
+  const set = new Set(staffList);
+  liveEntries.forEach(s=>{ if(s.addedBy) set.add(s.addedBy); });
+  Object.values(legacyContacts).forEach(c=>{ if(c.by) set.add(c.by); });
+  Object.values(verifyMap).forEach(v=>{ if(v.verifiedBy) set.add(v.verifiedBy); });
+  const el = document.getElementById('staffActivityFilter'); const prev = el.value;
+  el.innerHTML = '<option value="">Any staff activity</option>' + Array.from(set).sort().map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+  if(Array.from(set).includes(prev)) el.value = prev;
+}
+
+const chipDefs = [
+  {label:'Ready for Advanced', test:s=>s.lv===4},
+  {label:'Ready for Rescue', test:s=>s.lv===5||s.lv===5.5},
+  {label:'Divemaster candidates', test:s=>s.lv===6},
+  {label:'Possible duplicates', test:s=>!!s.dup},
+  {label:'Not yet contacted', test:s=>!getContactStatus(s).contacted},
+  {label:'Ready to call', test:s=>isCampaignReady(s)},
+  {label:'Added live', test:s=>!!s.live},
+];
+let activeChip = null;
+const chipRow = document.getElementById('chipRow');
+chipDefs.forEach((c,i)=>{
+  const el = document.createElement('span'); el.className='chip'; el.textContent=c.label;
+  el.onclick = ()=>{ activeChip=(activeChip===i)?null:i; state.page=1; render(); document.querySelectorAll('#chipRow .chip').forEach((n,j)=>n.classList.toggle('active', j===activeChip)); };
+  chipRow.appendChild(el);
+});
+
+let state = { q:'', level:'', trust:'', country:'', year:'', staff:'', sort:'recent', page:1, perPage:50 };
+const rowsEl = document.getElementById('rows');
+const countText = document.getElementById('countText');
+const upsellText = document.getElementById('upsellText');
+const emptyMsg = document.getElementById('emptyMsg');
+const pageText = document.getElementById('pageText');
+
+function matchesStaffActivity(s, staff){
+  if(!staff) return true;
+  if(s.live && s.addedBy===staff) return true;
+  const cs = getContactStatus(s); if(cs.by===staff) return true;
+  const v = verifyMap[s.id]; if(v && v.verifiedBy===staff) return true;
+  return false;
+}
+
+function filtered(){
+  let out = allStudents();
+  if(state.q){ const q=state.q.toLowerCase(); out = out.filter(s=>s._h.includes(q)); }
+  if(state.level){ out = out.filter(s=>String(s.lv)===state.level); }
+  if(state.trust){ out = out.filter(s=>s.tr===state.trust); }
+  if(state.country){ out = out.filter(s=>(s.r||'').trim().toUpperCase()===state.country); }
+  if(state.year){ out = out.filter(s=> state.year==='__none' ? !s.y : s.y===state.year); }
+  if(state.staff){ out = out.filter(s=>matchesStaffActivity(s, state.staff)); }
+  if(activeChip!==null){ out = out.filter(chipDefs[activeChip].test); }
+  out = out.slice();
+  if(state.sort==='name') out.sort((a,b)=>a.n.localeCompare(b.n));
+  else if(state.sort==='level_desc') out.sort((a,b)=>b.lv-a.lv || a.n.localeCompare(b.n));
+  else if(state.sort==='level_asc') out.sort((a,b)=>a.lv-b.lv || a.n.localeCompare(b.n));
+  else out.sort((a,b)=> (b.y||'0').localeCompare(a.y||'0') || (b.l||b.f||'').localeCompare(a.l||a.f||'') );
+  return out;
+}
+
+function rowStatusBadges(s){
+  const cs = getContactStatus(s);
+  return [
+    s.live ? '<span class="badge new">NEW</span>' : '',
+    s.dup ? '<span class="badge dup">⚠ Dup</span>' : '',
+    cs.contacted ? '<span class="badge contacted">✓ Contacted</span>' : '',
+    isCampaignReady(s) ? '<span class="badge verified">✓ Verified</span>' : '',
+  ].join('');
+}
+
+function render(){
+  refreshStats(); buildYearFilter(); buildCountryFilter();
+  const list = filtered();
+  const total = list.length;
+  const pages = Math.max(1, Math.ceil(total/state.perPage));
+  if(state.page>pages) state.page=pages;
+  const start = (state.page-1)*state.perPage;
+  const pageItems = list.slice(start, start+state.perPage);
+
+  countText.textContent = `Showing ${total? (start+1)+'–'+Math.min(start+state.perPage,total):0} of ${total.toLocaleString()} students`;
+  const upsell = list.filter(s=>s.lv>=3 && s.lv<7).length;
+  upsellText.textContent = total? `${upsell.toLocaleString()} in this view are ready for their next certification` : '';
+  emptyMsg.style.display = total?'none':'block';
+
+  rowsEl.innerHTML = pageItems.map(s=>{
+    const li = levelInfo(s.lv);
+    const badges = s.k.slice(0,3).map(c=>`<span class="badge ${li.cls}">${escapeHtml(c)}</span>`).join('') + (s.k.length>3?`<span class="badge">+${s.k.length-3}</span>`:'');
+    return `<tr data-ref="${s.id}">
+      <td class="name-cell"><b>${escapeHtml(s.n)}</b><div class="sub">${escapeHtml(s.e||s.c||'—')}</div></td>
+      <td><div class="badges">${badges||'<span class="sub">No course logged</span>'}</div></td>
+      <td><span class="badge tr-${s.tr}">${TRUST_LABEL[s.tr]||s.tr}</span></td>
+      <td><div class="next-txt">${escapeHtml(li.next)}</div></td>
+      <td>${escapeHtml(s.y||'—')}</td>
+      <td>${escapeHtml(s.r||'—')}</td>
+      <td><div class="badges">${rowStatusBadges(s)||'<span class="sub">—</span>'}</div></td>
+    </tr>`;
+  }).join('');
+  pageText.textContent = `Page ${state.page} of ${pages}`;
+  document.getElementById('prevBtn').disabled = state.page<=1;
+  document.getElementById('nextBtn').disabled = state.page>=pages;
+
+  const byId = {}; list.forEach(s=>byId[s.id]=s);
+  rowsEl.querySelectorAll('tr').forEach(tr=>{ tr.onclick = ()=> openModal(byId[tr.dataset.ref]); });
+}
+
+document.getElementById('q').addEventListener('input', e=>{ state.q=e.target.value.trim(); state.page=1; render(); });
+levelFilter.addEventListener('change', e=>{ state.level=e.target.value; state.page=1; render(); });
+document.getElementById('trustFilter').addEventListener('change', e=>{ state.trust=e.target.value; state.page=1; render(); });
+document.getElementById('yearFilter').addEventListener('change', e=>{ state.year=e.target.value; state.page=1; render(); });
+document.getElementById('countryFilter').addEventListener('change', e=>{ state.country=e.target.value; state.page=1; render(); });
+document.getElementById('staffActivityFilter').addEventListener('change', e=>{ state.staff=e.target.value; state.page=1; render(); });
+document.getElementById('sortBy').addEventListener('change', e=>{ state.sort=e.target.value; state.page=1; render(); });
+document.getElementById('prevBtn').addEventListener('click', ()=>{ if(state.page>1){state.page--; render(); window.scrollTo({top:0,behavior:'smooth'});} });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ state.page++; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+
+/* ---------------- Verification Queue tab ---------------- */
+let queueState = { q:'', page:1, perPage:50 };
+function queueList(){
+  let out = allStudents().filter(s=>!isCampaignReady(s));
+  if(queueState.q){ const q=queueState.q.toLowerCase(); out = out.filter(s=>s._h.includes(q)); }
+  out.sort((a,b)=>{
+    const aElig = (a.lv>=3 && a.lv<7) ? 1:0, bElig = (b.lv>=3 && b.lv<7) ? 1:0;
+    if(aElig!==bElig) return bElig-aElig;
+    return (b.y||'0').localeCompare(a.y||'0');
+  });
+  return out;
+}
+function renderQueue(){
+  const list = queueList();
+  const total = list.length;
+  const pages = Math.max(1, Math.ceil(total/queueState.perPage));
+  if(queueState.page>pages) queueState.page = pages;
+  const start = (queueState.page-1)*queueState.perPage;
+  const items = list.slice(start, start+queueState.perPage);
+  document.getElementById('queueCountText').textContent = `${total.toLocaleString()} students not yet verified for outreach`;
+  document.getElementById('queueEmpty').style.display = total?'none':'block';
+  const qRows = document.getElementById('queueRows');
+  qRows.innerHTML = items.map(s=>{
+    const li = levelInfo(s.lv);
+    return `<tr data-ref="${s.id}">
+      <td class="name-cell"><b>${escapeHtml(s.n)}</b><div class="sub">${escapeHtml(s.e||s.c||'—')}</div></td>
+      <td><span class="badge tr-${s.tr}">${TRUST_LABEL[s.tr]||s.tr}</span></td>
+      <td><span class="badge">${GR_LABEL[s.gr]||s.gr}</span></td>
+      <td><div class="next-txt">${escapeHtml(li.next)}</div></td>
+      <td>${escapeHtml(s.y||'—')}</td>
+      <td><button class="btn good" style="font-size:12px; padding:6px 10px;" data-verify="${s.id}">Verify</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('queuePageText').textContent = `Page ${queueState.page} of ${pages}`;
+  document.getElementById('queuePrevBtn').disabled = queueState.page<=1;
+  document.getElementById('queueNextBtn').disabled = queueState.page>=pages;
+  const byId = {}; items.forEach(s=>byId[s.id]=s);
+  qRows.querySelectorAll('tr').forEach(tr=>{ tr.onclick = (e)=>{ if(e.target.dataset.verify) return; openModal(byId[tr.dataset.ref]); }; });
+  qRows.querySelectorAll('[data-verify]').forEach(b=>{ b.onclick = (e)=>{ e.stopPropagation(); openModal(byId[b.dataset.verify], true); }; });
+}
+document.getElementById('qQueue').addEventListener('input', e=>{ queueState.q=e.target.value.trim(); queueState.page=1; renderQueue(); });
+document.getElementById('refreshQueueBtn').addEventListener('click', ()=>{ queueState.page=1; renderQueue(); });
+document.getElementById('queuePrevBtn').addEventListener('click', ()=>{ if(queueState.page>1){queueState.page--; renderQueue();} });
+document.getElementById('queueNextBtn').addEventListener('click', ()=>{ queueState.page++; renderQueue(); });
+
+/* ---------------- Detail modal ---------------- */
+const overlay = document.getElementById('overlay');
+const modalBody = document.getElementById('modalBody');
+
+function openModal(s, focusVerify){
+  if(!s) return;
+  const li = levelInfo(s.lv);
+  const courseItems = s.k.map((c,i)=>{
+    const dt = (s.kd && s.kd[i]) ? s.kd[i] : '';
+    return `<li>${escapeHtml(c)}${dt?`<span class="sub" style="float:right;">${escapeHtml(dt)}</span>`:''}</li>`;
+  }).join('') || '<li>No course details recorded</li>';
+  const groupsTxt = s.live ? '' : (s.g||[]).map(i=>GROUPS[i]).join(', ');
+  const insTxt = s.ins && s.ins.length ? s.ins.join(', ') : '';
+  const cs = getContactStatus(s);
+  const v = getVerification(s);
+
+  let dupHtml = '';
+  if(!s.live && s.dup){
+    const phone = normPhone(s.c);
+    const others = (legacyPhoneIndex[phone]||[]).filter(o=>o.id!==s.id && !mergesMap['s'+o.id]);
+    if(others.length){
+      dupHtml = `<div class="dup-box"><strong>⚠ Possible duplicate</strong> — same phone number as:
+        <ul>${others.map(o=>`<li><span>${escapeHtml(o.n)} — ${escapeHtml(o.e||'no email')}</span><button class="btn ghost" style="font-size:11px; padding:4px 8px;" data-mergeaway="${o.id}" data-into="${s.id}">Merge that one into this record</button></li>`).join('')}</ul>
+        </div>`;
+    }
+  }
+
+  const contactHtml = `
+    <div class="contact-box ${cs.contacted?'done':''}">
+      ${cs.contacted
+        ? `<strong>✓ Contacted</strong> by ${escapeHtml(cs.by||'—')}${cs.at?` on ${escapeHtml((cs.at||'').slice(0,10))}`:''}${cs.notes?`<div class="sub" style="margin-top:4px;">${escapeHtml(cs.notes)}</div>`:''}
+           <div class="modal-actions"><button class="btn ghost" id="uncontactBtn" style="font-size:12px;">Mark as not contacted</button></div>`
+        : `<div class="sub" style="margin-bottom:8px;">Not yet contacted for their next course.</div>
+           <textarea id="contactNotes" placeholder="Optional note (e.g. left voicemail, interested in Rescue course)…"></textarea>
+           <div class="modal-actions"><button class="btn good" id="contactBtn">✓ Mark as contacted</button></div>`
+      }
+    </div>`;
+
+  const verifyHtml = `
+    <div class="verify-box ${v.campaignReady?'done':''}" id="verifyBox">
+      <strong>${v.campaignReady?'✓ Verified — ready to call':'Verification checklist'}</strong>
+      <div class="verify-row"><span>Identity confirmed</span><div class="opts">
+        <button data-vf="identity" data-val="true" class="${v.identity?'sel':''}">Yes</button>
+        <button data-vf="identity" data-val="false" class="${v.identity===false?'sel':''}">No</button></div></div>
+      <div class="verify-row"><span>Current certification confirmed</span><div class="opts">
+        <button data-vf="cert" data-val="true" class="${v.cert?'sel':''}">Yes</button>
+        <button data-vf="cert" data-val="false" class="${v.cert===false?'sel':''}">No</button></div></div>
+      <div class="verify-row"><span>Phone ownership confirmed</span><div class="opts">
+        <button data-vf="phone" data-val="true" class="${v.phone?'sel':''}">Yes</button>
+        <button data-vf="phone" data-val="false" class="${v.phone===false?'sel':''}">No</button></div></div>
+      <div class="verify-row"><span>Email confirmed</span><div class="opts">
+        <button data-vf="email" data-val="true" class="${v.email?'sel':''}">Yes</button>
+        <button data-vf="email" data-val="false" class="${v.email===false?'sel':''}">No</button></div></div>
+      <div class="verify-row"><span>Consent to contact</span><div class="opts">
+        <button data-vf="consent" data-val="yes" class="${v.consent==='yes'?'sel':''}">Yes</button>
+        <button data-vf="consent" data-val="no" class="${v.consent==='no'?'sel':''}">No</button></div></div>
+      ${v.verifiedBy?`<div class="sub" style="margin-top:6px;">Last updated by ${escapeHtml(v.verifiedBy)}${v.verifiedAt?' on '+escapeHtml((v.verifiedAt||'').slice(0,10)):''}</div>`:''}
+    </div>`;
+
+  const editBtn = !s.live ? `<button class="btn ghost" id="editBtn">✎ Edit details</button>` : '';
+  const deleteBtn = s.live ? `<button class="btn bad" id="deleteBtn">Delete this entry</button>` : '';
+
+  modalBody.innerHTML = `
+    <button class="close-x" id="closeX">✕</button>
+    <h2>${escapeHtml(s.n)} ${s.live?'<span class="badge new" style="vertical-align:middle;">NEW</span>':''} ${s._edited?'<span class="badge" style="vertical-align:middle;">edited</span>':''}</h2>
+    <div class="sub">${li.label} · <span class="badge tr-${s.tr}">${TRUST_LABEL[s.tr]||s.tr}</span> · Contact: ${GR_LABEL[s.gr]||s.gr}</div>
+    <div class="detail-grid">
+      <div><span>Email</span>${s.e? `<a href="mailto:${escapeHtml(s.e)}">${escapeHtml(s.e)}</a>`:'—'}</div>
+      <div><span>Phone</span>${s.c? `<a href="tel:${escapeHtml(s.c)}">${escapeHtml(s.c)}</a>`:'—'}</div>
+      <div><span>Date of birth</span>${escapeHtml(s.b||'—')}</div>
+      <div><span>Country of residence</span>${escapeHtml(s.r||'—')}</div>
+      <div><span>Year trained</span>${escapeHtml(s.y||'—')}</div>
+      <div><span>${s.live?'Added by':'Source'}</span>${escapeHtml(s.live? (s.addedBy||'—') : '')}</div>
+    </div>
+    <div style="font-size:12px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">Certifications on file</div>
+    <ul class="course-list">${courseItems}</ul>
+    <div class="next-box"><strong>Next step:</strong> ${escapeHtml(li.next)}</div>
+    ${dupHtml}
+    ${verifyHtml}
+    ${contactHtml}
+    ${groupsTxt? `<div class="sub" style="margin-top:12px;">Source record(s): ${escapeHtml(groupsTxt)}</div>`:''}
+    ${insTxt? `<div class="sub">Instructor notes: ${escapeHtml(insTxt)}</div>`:''}
+    <div class="modal-actions">
+      ${s.e?`<a class="btn" href="mailto:${escapeHtml(s.e)}">✉ Email</a>`:''}
+      ${s.c?`<a class="btn ghost" href="tel:${escapeHtml(s.c)}">📞 Call</a>`:''}
+      ${editBtn}
+      ${deleteBtn}
+    </div>
+  `;
+  document.getElementById('closeX').onclick = closeModal;
+  const cBtn = document.getElementById('contactBtn'); if(cBtn) cBtn.onclick = ()=> setContacted(s, true);
+  const uBtn = document.getElementById('uncontactBtn'); if(uBtn) uBtn.onclick = ()=> setContacted(s, false);
+  const eBtn = document.getElementById('editBtn'); if(eBtn) eBtn.onclick = ()=> openEditForm(s);
+  const dBtn = document.getElementById('deleteBtn'); if(dBtn) dBtn.onclick = ()=> confirmDelete(s, dBtn);
+  modalBody.querySelectorAll('[data-mergeaway]').forEach(b=>{ b.onclick = ()=> mergeAway(b.dataset.mergeaway, b.dataset.into); });
+  modalBody.querySelectorAll('[data-vf]').forEach(b=>{ b.onclick = ()=> setVerifyField(s, b.dataset.vf, b.dataset.val); });
+  overlay.classList.add('show');
+  if(focusVerify){ document.getElementById('verifyBox').scrollIntoView({block:'center'}); }
+}
+function closeModal(){ overlay.classList.remove('show'); }
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+async function setContacted(s, val){
+  if(!dbNS){ banner("Live database isn't available in this view.",'err'); return; }
+  const staff = currentStaff();
+  if(val && !staff){ banner('Pick your name in "Signed in as" at the top first.','err'); return; }
+  const notesEl = document.getElementById('contactNotes');
+  const notes = notesEl ? notesEl.value.trim() : '';
+  try{
+    if(s.live){
+      await dbNS.collection('entries').doc(s.id.replace('live-','')).update({contacted:val, contactedBy: val?staff:'', contactedAt: val? new Date().toISOString():'', notes: val?notes:''});
+    } else {
+      const ref = dbNS.doc('contacts/s'+s.id);
+      if(val) await ref.set({contacted:true, by:staff, at:new Date().toISOString(), notes});
+      else await ref.set({contacted:false, by:'', at:'', notes:''});
+    }
+    closeModal(); banner(val?'Marked as contacted.':'Marked as not contacted.','ok');
+  }catch(err){ banner('Could not save: '+(err&&err.message||err),'err'); }
+}
+
+async function setVerifyField(s, field, val){
+  if(!dbNS){ banner("Live database isn't available in this view.",'err'); return; }
+  const staff = currentStaff();
+  if(!staff){ banner('Pick your name in "Signed in as" at the top first.','err'); return; }
+  const cur = getVerification(s);
+  const next = Object.assign({}, cur);
+  next[field] = (field==='consent') ? val : (val==='true');
+  next.campaignReady = !!(next.identity && next.cert && (next.phone||next.email) && next.consent==='yes');
+  next.verifiedBy = staff; next.verifiedAt = new Date().toISOString();
+  try{
+    await dbNS.doc('verifications/'+s.id).set(next);
+    openModal(Object.assign({}, s), true);
+  }catch(err){ banner('Could not save verification: '+(err&&err.message||err),'err'); }
+}
+
+async function mergeAway(otherId, intoId){
+  if(!dbNS){ banner("Live database isn't available in this view.",'err'); return; }
+  const staff = currentStaff();
+  if(!staff){ banner('Pick your name in "Signed in as" at the top first.','err'); return; }
+  try{
+    await dbNS.doc('merges/s'+otherId).set({mergedInto: 's'+intoId, mergedBy: staff, mergedAt: new Date().toISOString()});
+    banner('Merged — that duplicate record is now hidden from the list.','ok');
+    closeModal();
+  }catch(err){ banner('Could not merge: '+(err&&err.message||err),'err'); }
+}
+
+function confirmDelete(s, btn){
+  if(btn.dataset.armed){
+    (async ()=>{
+      try{ await dbNS.collection('entries').doc(s.id.replace('live-','')).delete(); closeModal(); banner('Entry deleted.','ok'); }
+      catch(err){ banner('Could not delete: '+(err&&err.message||err),'err'); }
+    })();
+  } else {
+    btn.dataset.armed = '1'; btn.textContent = 'Click again to confirm delete';
+    setTimeout(()=>{ btn.dataset.armed=''; btn.textContent='Delete this entry'; }, 4000);
+  }
+}
+
+function openEditForm(s){
+  modalBody.innerHTML = `
+    <button class="close-x" id="closeX">✕</button>
+    <h2>Edit ${escapeHtml(s.n)}</h2>
+    <div class="sub">Historical record — this saves an override on top of the original import, the original stays on file.</div>
+    <div class="form-grid">
+      <div class="full"><label>Full name</label><input id="eName" type="text" value="${escapeHtml(s.n)}"></div>
+      <div><label>Email</label><input id="eEmail" type="email" value="${escapeHtml(s.e)}"></div>
+      <div><label>Phone</label><input id="ePhone" type="text" value="${escapeHtml(s.c)}"></div>
+      <div><label>Date of birth</label><input id="eDob" type="text" value="${escapeHtml(s.b)}"></div>
+      <div><label>Country of residence</label><input id="eRes" type="text" value="${escapeHtml(s.r)}"></div>
+    </div>
+    <div class="modal-actions"><button class="btn" id="saveEditBtn">Save changes</button><button class="btn ghost" id="cancelEditBtn">Cancel</button></div>
+  `;
+  document.getElementById('closeX').onclick = closeModal;
+  document.getElementById('cancelEditBtn').onclick = ()=> openModal(s);
+  document.getElementById('saveEditBtn').onclick = async ()=>{
+    if(!dbNS){ banner("Live database isn't available in this view.",'err'); return; }
+    const staff = currentStaff();
+    if(!staff){ banner('Pick your name in "Signed in as" at the top first.','err'); return; }
+    const payload = {
+      n:document.getElementById('eName').value.trim(), e:document.getElementById('eEmail').value.trim().toLowerCase(),
+      c:document.getElementById('ePhone').value.trim(), b:document.getElementById('eDob').value.trim(),
+      r:document.getElementById('eRes').value.trim(), editedBy:staff, editedAt:new Date().toISOString(),
+    };
+    try{ await dbNS.doc('edits/s'+s.id).set(payload); closeModal(); banner('Saved.','ok'); }
+    catch(err){ banner('Could not save edit: '+(err&&err.message||err),'err'); }
+  };
+}
+
+/* ---------------- Add Student ---------------- */
+document.getElementById('addBtn').addEventListener('click', ()=>{
+  if(!dbNS){ banner("Live database isn't available in this view, so new students can't be saved yet.",'err'); return; }
+  const staff = currentStaff();
+  const courseOpts = COURSE_OPTIONS.map(([name])=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+  const yearOpts = (()=>{ const y=new Date().getFullYear(); let o=''; for(let i=y;i>=y-3;i--) o+=`<option value="${i}">${i}</option>`; return o; })();
+  modalBody.innerHTML = `
+    <button class="close-x" id="closeX">✕</button>
+    <h2>Add a Student</h2>
+    <div class="sub">Logged by ${escapeHtml(staff||'(pick your name at the top first)')}</div>
+    <div class="form-grid">
+      <div class="full"><label>Full name *</label><input id="fName" type="text"></div>
+      <div><label>Email</label><input id="fEmail" type="email"></div>
+      <div><label>Phone</label><input id="fPhone" type="text"></div>
+      <div><label>Date of birth</label><input id="fDob" type="text" placeholder="DD.MM.YYYY"></div>
+      <div><label>Country of residence</label><input id="fRes" type="text"></div>
+      <div><label>Course completed *</label><select id="fCourse">${courseOpts}</select></div>
+      <div><label>Year completed</label><select id="fYear">${yearOpts}</select></div>
+    </div>
+    <div class="field-note">New entries sync live to every staff member viewing this page.</div>
+    <div class="modal-actions"><button class="btn" id="saveBtn">Save student</button><button class="btn ghost" id="cancelBtn">Cancel</button></div>
+  `;
+  document.getElementById('closeX').onclick = closeModal;
+  document.getElementById('cancelBtn').onclick = closeModal;
+  document.getElementById('saveBtn').onclick = async ()=>{
+    const n = document.getElementById('fName').value.trim();
+    if(!n){ banner('Name is required.','err'); return; }
+    if(!staff){ banner('Pick your name in "Signed in as" at the top first.','err'); return; }
+    const courseName = document.getElementById('fCourse').value;
+    const lv = (COURSE_OPTIONS.find(c=>c[0]===courseName)||[,0])[1];
+    const payload = {
+      n, e:document.getElementById('fEmail').value.trim().toLowerCase(), c:document.getElementById('fPhone').value.trim(),
+      b:document.getElementById('fDob').value.trim(), r:document.getElementById('fRes').value.trim(), k:[courseName], lv,
+      y:document.getElementById('fYear').value, addedBy:staff, addedAt:new Date().toISOString(),
+      contacted:false, contactedBy:'', contactedAt:'', notes:'',
+    };
+    try{ await dbNS.collection('entries').add(payload); closeModal(); banner('Student added.','ok'); }
+    catch(err){ banner('Could not save student: '+(err&&err.message||err),'err'); }
+  };
+  overlay.classList.add('show');
+});
+
+/* ---------------- CSV export ---------------- */
+function downloadCsv(rows, header, filename){
+  const csv = [header.join(','), ...rows.map(r=>r.map(v=>{ v=String(v==null?'':v).replace(/"/g,'""'); return `"${v}"`; }).join(','))].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+document.getElementById('exportBtn').addEventListener('click', ()=>{
+  const list = filtered();
+  const header = ['Name','Email','Phone','DOB','Country','Certifications','Highest Level','Record Quality','Next Step','Year Trained','Contacted','Contacted By','Added Live By'];
+  const rows = list.map(s=>{ const cs=getContactStatus(s); return [s.n,s.e,s.c,s.b,s.r,s.k.join('; '),levelInfo(s.lv).label,TRUST_LABEL[s.tr]||s.tr,levelInfo(s.lv).next,s.y,cs.contacted?'Yes':'No',cs.by||'',s.live?(s.addedBy||''):'']; });
+  downloadCsv(rows, header, 'al-boom-students.csv');
+});
+document.getElementById('callListBtn').addEventListener('click', ()=>{
+  const list = filtered().filter(s=>!getContactStatus(s).contacted && (s.e||s.c));
+  if(!list.length){ banner('Nobody left to call in the current filters.', 'ok'); return; }
+  const header = ['Name','Phone','Email','Record Quality','Contact Info','Next Step','Year Trained'];
+  const rows = list.map(s=>[s.n,s.c,s.e,TRUST_LABEL[s.tr]||s.tr,GR_LABEL[s.gr]||s.gr,levelInfo(s.lv).next,s.y]);
+  downloadCsv(rows, header, 'al-boom-call-list.csv');
+  banner(`Call list exported — ${list.length} students.`, 'ok');
+});
+
+/* ---------------- Reports ---------------- */
+function barRows(container, entries, max){
+  container.innerHTML = entries.map(([label,val])=>`
+    <div class="bar-row"><div class="lbl" title="${escapeHtml(label)}">${escapeHtml(label)}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${max? (val/max*100):0}%;"></div></div>
+    <div class="bar-val">${val.toLocaleString()}</div></div>`).join('') || '<p class="sub">No data yet.</p>';
+}
+function renderReports(){
+  const all = allStudents();
+  const byYear = {}; all.forEach(s=>{ if(s.y) byYear[s.y]=(byYear[s.y]||0)+1; });
+  const yearEntries = Object.entries(byYear).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,12);
+  barRows(document.getElementById('repYear'), yearEntries, Math.max(1,...yearEntries.map(e=>e[1])));
+
+  const byCourse = {}; all.forEach(s=>s.k.forEach(c=>{ byCourse[c]=(byCourse[c]||0)+1; }));
+  const courseEntries = Object.entries(byCourse).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  barRows(document.getElementById('repCourse'), courseEntries, Math.max(1,...courseEntries.map(e=>e[1])));
+
+  const byTrust = {TRUSTED:0,GAPS:0,REVIEW:0,HOLD:0}; all.forEach(s=>{ byTrust[s.tr]=(byTrust[s.tr]||0)+1; });
+  const trustEntries = Object.entries(byTrust).map(([k,v])=>[TRUST_LABEL[k]||k, v]);
+  barRows(document.getElementById('repTrust'), trustEntries, Math.max(1,...trustEntries.map(e=>e[1])));
+
+  const contacted = all.filter(s=>getContactStatus(s).contacted).length;
+  const verified = all.filter(isCampaignReady).length;
+  const contactEntries = [['Contacted', contacted], ['Not contacted', all.length-contacted], ['Ready to call (verified)', verified]];
+  barRows(document.getElementById('repContact'), contactEntries, all.length||1);
+
+  const staffCounts = {};
+  liveEntries.forEach(s=>{ if(s.addedBy){ staffCounts[s.addedBy]=staffCounts[s.addedBy]||{added:0,contacted:0,verified:0}; staffCounts[s.addedBy].added++; } });
+  Object.values(legacyContacts).forEach(c=>{ if(c.by && c.contacted){ staffCounts[c.by]=staffCounts[c.by]||{added:0,contacted:0,verified:0}; staffCounts[c.by].contacted++; } });
+  liveEntries.forEach(s=>{ if(s.contactedBy && s.contacted){ staffCounts[s.contactedBy]=staffCounts[s.contactedBy]||{added:0,contacted:0,verified:0}; staffCounts[s.contactedBy].contacted++; } });
+  Object.values(verifyMap).forEach(v=>{ if(v.verifiedBy){ staffCounts[v.verifiedBy]=staffCounts[v.verifiedBy]||{added:0,contacted:0,verified:0}; staffCounts[v.verifiedBy].verified++; } });
+  const staffRows = Object.entries(staffCounts);
+  const repStaff = document.getElementById('repStaff');
+  if(!staffRows.length){ repStaff.innerHTML = '<p class="sub">No live activity logged yet.</p>'; }
+  else{
+    repStaff.innerHTML = `<div class="grid"><table><thead><tr><th>Staff</th><th>Students added</th><th>Contacts logged</th><th>Verifications done</th></tr></thead><tbody>` +
+      staffRows.map(([name,c])=>`<tr><td>${escapeHtml(name)}</td><td>${c.added}</td><td>${c.contacted}</td><td>${c.verified}</td></tr>`).join('') +
+      `</tbody></table></div>`;
+  }
+}
+document.getElementById('archiveBtn').addEventListener('click', ()=>{
+  const pkg = { exportedAt:new Date().toISOString(), entries:liveEntries, contacts:legacyContacts, edits:editsMap, merges:mergesMap, verifications:verifyMap, staff:staffList };
+  const blob = new Blob([JSON.stringify(pkg, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'al-boom-live-archive.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  banner("Archive exported — send this to your admin to fold into next year's dataset.", 'ok');
+});
+
+document.querySelectorAll('footer')[0].innerHTML = document.querySelectorAll('footer')[0].innerHTML.replace('29417', LEGACY.length.toLocaleString());
+
+render(); renderQueue(); renderReports();
+initDb();
+</script>
+</body>
+</html>

@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DiveDesk Ops (Demo)</title>
+<style>
+:root{--ink:#0d2233;--mut:#32495c;--navy:#0b2b45;--teal:#1b7b95;--teal-d:#146178;--aqua:#6ec6d1;--gold:#f2c46d;--bad:#a5231b;--badbg:#fde4e1;--warn:#7a4b00;--warnbg:#ffefc9;--ok:#17693f;--okbg:#dcf3e6;--line:rgba(13,34,51,.15);--r:20px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#0f4666;font-variant-numeric:tabular-nums}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+ radial-gradient(55vw 55vh at 8% 0%,rgba(110,198,209,.60),transparent 62%),
+ radial-gradient(45vw 45vh at 96% 8%,rgba(242,196,109,.30),transparent 62%),
+ radial-gradient(70vw 60vh at 75% 105%,rgba(42,160,180,.55),transparent 62%),
+ linear-gradient(160deg,#0a2740 0%,#0f4666 50%,#17718b 100%)}
+h1,h2,h3,h4,p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 5px rgba(11,43,69,.75)}
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.86),rgba(255,255,255,.68));-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);border:1px solid rgba(255,255,255,.62);border-radius:var(--r);box-shadow:0 10px 30px rgba(5,24,41,.22),inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(13,34,51,.06)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.glass{background:rgba(245,250,252,.95)}}
+.pad{padding:18px 20px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--mut)}
+.mut{color:var(--mut)}
+.hint{color:var(--mut);font-size:13px}
+
+/* demo banner + quick start */
+.demo{background:#f2c46d;color:#3d2a00;text-align:center;font-size:13.5px;font-weight:600;padding:8px 14px;line-height:1.4}
+.demo a{color:#3d2a00}
+.qs{padding:16px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start;position:relative}
+.qs h3{grid-column:1/-1;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+.qs .st{display:flex;gap:10px;font-size:13.5px;line-height:1.45}
+.qs .st b.n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-size:13px}
+@media(max-width:1000px){.qs{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.qs{grid-template-columns:1fr}}
+/* layout */
+.app{display:grid;grid-template-columns:236px minmax(0,1fr);gap:20px;max-width:1760px;margin:0 auto;padding:20px}
+.main{min-width:0;display:flex;flex-direction:column;gap:18px}
+.side{position:sticky;top:20px;align-self:start;height:calc(100vh - 40px);display:flex;flex-direction:column;gap:18px;padding:18px 14px;color:#fff;border-radius:24px;border:1px solid rgba(255,255,255,.24);background:linear-gradient(160deg,rgba(11,43,69,.74),rgba(11,43,69,.52));-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 10px 30px rgba(5,24,41,.3),inset 0 1px 0 rgba(255,255,255,.25)}
+.brand{display:flex;gap:11px;align-items:center;padding:2px 6px}
+.logo{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#8fdbe4,#2a95b0);color:#06304a}
+.logo svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.brand b{font-size:19px;letter-spacing:-.3px;display:block;line-height:1.1}.brand b span{color:#9fe3ec}
+.brand small{display:block;font-size:12px;color:#c9dfea;margin-top:3px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{display:flex;align-items:center;gap:11px;border:0;background:transparent;color:#e3f0f6;padding:10px 12px;border-radius:13px;font-weight:600;font-size:14.5px;text-align:left}
+.nav button:hover:not(.on){background:rgba(255,255,255,.14)}
+.nav button.on{background:rgba(255,255,255,.93);color:var(--navy)}
+.nav svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.me{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#c9dfea}
+.me input{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.16);color:#fff;border-radius:11px;padding:9px 11px;text-transform:none;letter-spacing:0;font-weight:500;font-size:14px}
+.me input::placeholder{color:#c9dfea}
+.pill-bk{font-size:12.5px;padding:7px 10px;border-radius:11px;background:rgba(255,255,255,.14);color:#e3f0f6;line-height:1.35}
+.pill-bk.warn{background:#ffefc9;color:#6b4100;font-weight:600}
+
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 20px}
+.topbar h1{font-size:26px;letter-spacing:-.5px;line-height:1.2;margin-top:2px}
+.tb-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tb-actions input[type=date]{border:1px solid rgba(13,34,51,.22);border-radius:11px;padding:6px 10px;background:rgba(255,255,255,.85);font-size:14px}
+
+/* buttons */
+.btn{border:0;border-radius:12px;padding:9px 16px;font-weight:650;font-size:14px;background:linear-gradient(180deg,#1d819c,#146178);color:#fff;box-shadow:0 2px 6px rgba(15,70,102,.3),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .15s,filter .15s}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:10px}
+.btn.ghost{background:rgba(255,255,255,.78);color:var(--navy);border:1px solid rgba(13,34,51,.2);box-shadow:none}
+.btn.danger{background:#fff;color:var(--bad);border:1px solid #e3b4af;box-shadow:none}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+
+/* week strip */
+.week{display:grid;grid-template-columns:repeat(7,minmax(104px,1fr));gap:10px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x proximity}
+.day{display:flex;flex-direction:column;gap:2px;align-items:center;padding:10px 8px;text-align:center;cursor:pointer;scroll-snap-align:center;transition:transform .15s}
+.day:hover{transform:translateY(-2px)}
+.day.we{background:linear-gradient(135deg,rgba(255,244,214,.92),rgba(255,236,190,.74))}
+.day.sel{outline:3px solid #fff;outline-offset:1px;box-shadow:0 0 0 5px rgba(27,123,149,.8),0 10px 30px rgba(5,24,41,.25)}
+.dw{font-size:12.5px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.dn{font-size:24px;font-weight:750;line-height:1.1}
+.dc{font-size:12.5px;color:var(--mut)}
+.mini{width:100%;height:5px;border-radius:5px;background:rgba(13,34,51,.14);overflow:hidden;margin-top:4px}
+.mini i{display:block;height:100%;background:var(--teal)}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.kpi{padding:15px 18px}
+.kpi .k-l{font-size:13px;font-weight:650;color:var(--mut)}
+.kpi .k-v{font-size:32px;font-weight:760;letter-spacing:-.8px;line-height:1.15;margin:3px 0 2px}
+.kpi .k-s{font-size:13px;color:var(--mut)}
+.kpi .k-d{font-size:12.5px;color:var(--mut);margin-top:4px;font-weight:600}
+.kpi.bad .k-v{color:var(--bad)}.kpi.warnk .k-v{color:var(--warn)}.kpi.good .k-v{color:var(--ok)}
+.kpi button.k-link{margin-top:6px;border:0;background:none;padding:0;color:var(--teal-d);font-weight:700;font-size:13px;text-decoration:underline;cursor:pointer}
+
+/* board */
+.board{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px;align-items:start}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.slot-h{display:flex;align-items:center;gap:12px;margin:4px 2px 10px}
+.slot-h h2{font-size:17px;color:#fff;text-shadow:0 1px 8px rgba(5,24,41,.5)}
+.slot-h .cnt{color:#e3f0f6;font-size:13px}
+.slot-h .btn{margin-left:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{padding:16px 18px 14px;cursor:pointer;transition:transform .18s,box-shadow .18s;display:flex;flex-direction:column;gap:10px}
+.card:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(5,24,41,.3),inset 0 1px 0 rgba(255,255,255,.85)}
+.card.is-bad{border-color:rgba(165,35,27,.6);box-shadow:0 10px 30px rgba(5,24,41,.22),inset 4px 0 0 var(--bad),inset 0 1px 0 rgba(255,255,255,.85)}
+.card-top{display:flex;gap:11px;align-items:flex-start}
+.dot{width:14px;height:14px;border-radius:50%;margin-top:5px;flex:none;border:2px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(13,34,51,.3);background:#c4d2db}
+.c-Red{background:#d64545}.c-Green{background:#2f9e5b}.c-Blue{background:#2f6fd6}.c-Yellow{background:#e6b422}
+.card-title{flex:1;min-width:0}
+.boat{font-size:19px;font-weight:750;letter-spacing:-.3px;line-height:1.25;overflow-wrap:anywhere}
+.sub{font-size:13.5px;color:var(--mut)}
+.tag{font-size:12px;font-weight:750;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.tag.big{background:var(--navy);color:#fff}.tag.small{background:#dde9ef;color:#26405a;border:1px solid #b9ccd8}
+.sites{display:flex;flex-direction:column;font-size:14px;font-weight:650}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--mut)}
+.meter-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--mut);margin-bottom:5px}
+.meter-row b{color:var(--ink);font-size:15px}
+.bar{height:8px;border-radius:8px;background:rgba(13,34,51,.14);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#2a95b0,#1b7b95)}
+.bar i.over{background:var(--bad)}
+.crew{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;background:rgba(27,123,149,.15);color:#0a4658;font-size:12.5px;font-weight:650}
+.nocrew{font-size:13px;color:var(--mut)}
+.warns{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.warns li{font-size:13px;padding:5px 10px;border-radius:9px;line-height:1.35}
+.warns .bad{background:var(--badbg);color:var(--bad);font-weight:600}
+.warns .warn{background:var(--warnbg);color:var(--warn)}
+.okline{font-size:13px;color:var(--ok);font-weight:650}
+.card-foot{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);border-top:1px solid var(--line);padding-top:9px;margin-top:auto}
+.empty{padding:26px;text-align:center;color:var(--mut)}
+
+/* rail cards */
+.rc{padding:16px 18px}
+.rc h3{font-size:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.duty{display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)}
+.duty:last-child{border-bottom:0}
+.duty-name{font-weight:700;font-size:13.5px}
+.duty-sel{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.duty-sel select{width:100%;min-width:0;padding:5px 6px;font-size:13px}
+.li{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.li:last-child{border-bottom:0}
+.li b{display:block}
+.li .sm2{font-size:12.5px;color:var(--mut)}
+.link{border:0;background:none;color:var(--teal-d);font-weight:700;font-size:13px;text-decoration:underline;padding:0}
+
+/* prepare */
+.pg{margin-bottom:10px}
+.pg h4{font-size:12px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--mut);margin-bottom:5px}
+.pgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.pc{background:rgba(255,255,255,.75);border:1px solid var(--line);border-radius:9px;padding:3px 9px;font-size:13px}
+.pc b{color:var(--navy)}.pc em{font-style:normal;color:var(--mut);font-size:12.5px}
+.pc.short{background:var(--badbg);border-color:#efb2ac;color:var(--bad)}.pc.short em{color:var(--bad);font-weight:700}
+.pc.none{color:var(--mut)}
+
+/* tables */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:9px 9px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;font-size:13.5px}
+th{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mut);background:rgba(13,34,51,.06);white-space:nowrap}
+tbody tr:hover td{background:rgba(27,123,149,.06)}
+td .sm2{display:block;font-size:12.5px;color:var(--mut)}
+.pill{border-radius:99px;padding:2px 10px;font-size:12.5px;font-weight:650;white-space:nowrap}
+.pill.y{background:var(--okbg);color:var(--ok)}.pill.n{background:var(--badbg);color:var(--bad)}.pill.w{background:var(--warnbg);color:var(--warn)}
+.tgl{border:1px solid #9fb4c2;background:#fff;color:var(--mut);padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:650}
+.tgl.on{background:var(--okbg);border-color:#8fcaa9;color:var(--ok)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.fchip{border:1px solid rgba(13,34,51,.22);background:rgba(255,255,255,.7);border-radius:99px;padding:5px 13px;font-weight:650;font-size:13px;color:var(--navy)}
+.fchip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.filters input[type=search]{margin-left:auto;min-width:220px}
+
+/* forms */
+input,select,textarea{border:1px solid #a9bccb;border-radius:10px;padding:8px 10px;background:#fff;font-size:14px;color:var(--ink);max-width:100%}
+input[type=checkbox]{width:18px;height:18px;padding:0;accent-color:var(--teal)}
+.f{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:700;color:var(--mut)}
+.f input,.f select,.f textarea{font-weight:400;width:100%}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink);padding-top:22px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.grid .span2{grid-column:span 2}.grid .span4{grid-column:1/-1}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>.f{flex:1;min-width:140px}
+.sech{font-size:13px;font-weight:750;letter-spacing:.7px;text-transform:uppercase;color:var(--teal-d);margin:16px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.codes{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+
+/* overlays */
+.overlay{position:fixed;inset:0;z-index:30;background:rgba(5,24,41,.58);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);display:none;align-items:flex-start;justify-content:center;padding:22px;overflow:auto}
+.overlay.open{display:flex}
+#modal{z-index:40}
+.sheet{margin:auto;background:rgba(251,253,254,.985);border-radius:24px;box-shadow:0 24px 80px rgba(5,24,41,.45);width:min(1480px,100%);padding:22px 24px}
+.sheet.narrow{width:min(860px,100%)}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.phead h2{font-size:24px;letter-spacing:-.4px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.box{border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:14px;background:#fff}
+.box h3{font-size:16px;margin-bottom:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:60;background:rgba(11,43,69,.94);color:#fff;border-radius:14px;padding:11px 18px;font-weight:600;transition:.25s;max-width:90vw}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* handover */
+.hgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.plan-sum{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.plan-sum .pc{font-size:14px;padding:5px 12px}
+.ch-new{background:var(--okbg);color:var(--ok)}.ch-upd{background:#dbeaf7;color:#124a85}.ch-keep{background:var(--warnbg);color:var(--warn)}.ch-del{background:var(--badbg);color:var(--bad)}
+.hl{max-height:380px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#fff}
+.hl .li{padding:8px 12px}
+
+/* roster */
+.ro{display:grid;grid-template-columns:170px repeat(7,minmax(96px,1fr));gap:4px;font-size:13px;min-width:860px}
+.ro div{padding:7px 6px;border-radius:8px;background:rgba(13,34,51,.06);text-align:center}
+.ro .h{font-weight:700;background:rgba(13,34,51,.13)}.ro .nm{text-align:left;font-weight:650}
+.ro .lv{background:var(--badbg);color:var(--bad);font-weight:700}.ro .wk{background:rgba(27,123,149,.2);color:#0a4658;font-weight:650}.ro .fr{color:var(--mut)}
+
+/* print area */
+#printArea{display:none}
+.pm{font-family:Arial,Helvetica,sans-serif;color:#000;font-size:8.6pt;line-height:1.25}
+.pm h1{font-size:15pt;margin:0 0 4px}
+.pm table{border-collapse:collapse;width:100%}
+.pm th,.pm td{border:.5pt solid #000;padding:2.2pt 3.5pt;font-size:8.2pt;text-transform:none;letter-spacing:0;color:#000;background:#fff;vertical-align:middle}
+.pm th{font-weight:700;background:#e6e6e6;white-space:normal}
+.pm .noborder td,.pm .noborder th{border:0}
+.pm .r td{height:5.9mm}
+.pm .c{text-align:center}
+.pm .blk{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:3mm}
+.pm .ln{border-bottom:.5pt solid #000;height:4.6mm}
+.pm .small{font-size:7.4pt}
+.pm .nb{break-inside:avoid;page-break-inside:avoid}
+.pm.dayplan table{margin-bottom:6px}
+
+/* responsive */
+@media(max-width:1380px){.board{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1000px){
+ .app{grid-template-columns:minmax(0,1fr);padding:10px;gap:12px}
+ .side{min-width:0}
+ .nav{min-width:0;max-width:100%}
+ .me input{width:150px}
+ .side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px 12px;gap:10px;border-radius:18px}
+ .brand small{display:none}
+ .nav{flex-direction:row;overflow-x:auto;flex:1 1 100%;order:3;padding-bottom:2px}
+ .nav button{padding:8px 12px;white-space:nowrap}
+ .side-foot{margin-top:0;flex-direction:row;align-items:flex-end;margin-left:auto}
+ .pill-bk{display:none}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:1fr}
+ .hgrid{grid-template-columns:1fr}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .topbar h1{font-size:21px}
+ .overlay{padding:8px}.sheet{padding:16px 14px;border-radius:18px}
+}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.grid .span2{grid-column:auto}.cards{grid-template-columns:1fr}.filters input[type=search]{margin-left:0;width:100%}.week{grid-template-columns:repeat(7,98px)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.card:hover,.btn:hover,.day:hover{transform:none}}
+@media print{
+ body{background:#fff!important;color:#000}
+ body::before{display:none}
+ .app,.overlay,.toast{display:none!important}
+ #printArea{display:block}
+}
+
+</style></head><body>
+<div class="demo" role="note">Demo version with made-up boats, staff and guests. Changes save in your browser only. Reset any time in Setup.</div>
+<div class="app">
+ <aside class="side" aria-label="Main navigation">
+  <div class="brand">
+   <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 16c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M2 20c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M12 3v8M8.5 6.5 12 3l3.5 3.5"/></svg></div>
+   <div><b>Dive<span>Desk</span></b><small>Dive center operations</small></div>
+  </div>
+  <nav class="nav" id="nav">
+   <button data-t="board" class="on"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Day board</button>
+   <button data-t="bookings"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>Bookings</button>
+   <button data-t="staff"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 5a3.5 3.5 0 0 1 0 6.5M18 14.3c2 .8 3.5 2.6 3.5 5.7"/></svg>Staff &amp; roster</button>
+   <button data-t="equipment"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="8" height="18" rx="4"/><path d="M8 8h8M11 3V1.5h2V3"/></svg>Equipment</button>
+   <button data-t="handover"><svg viewBox="0 0 24 24"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>Handover</button>
+   <button data-t="setup"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>Setup</button>
+  </nav>
+  <div class="side-foot">
+   <div class="pill-bk" id="bkPill"></div>
+   <label class="me">Your name<input id="meName" placeholder="e.g. Front desk" autocomplete="off" maxlength="40"></label>
+  </div>
+ </aside>
+ <main class="main" id="main" tabindex="-1"></main>
+</div>
+<div class="overlay" id="panel" role="dialog" aria-modal="true" aria-label="Trip"></div>
+<div class="overlay" id="modal" role="dialog" aria-modal="true" aria-label="Edit"></div>
+<div id="printArea"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileIn" accept=".json,application/json" hidden>
+
+<script>
+'use strict';
+/* ===== helpers ===== */
+const KEY='divedesk_demo_v1';
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>[].slice.call((r||document).querySelectorAll(s));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=p=>(p||'x')+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-4);
+const nowTs=()=>Date.now();
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=s=>{const a=String(s).split('-').map(Number);return new Date(a[0],a[1]-1,a[2])};
+const addD=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ymd(d)};
+const todayS=()=>ymd(new Date());
+const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtD=s=>{const d=pd(s);return DOW[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]};
+const fmtL=s=>{const d=pd(s);return DOW[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()};
+const weekStart=s=>{const d=pd(s);const k=(d.getDay()+6)%7;return addD(s,-k)};
+const isWE=s=>{const k=pd(s).getDay();return k===5||k===6};
+const SLOTS=['AM','PM','Night'];
+const SLOTN={AM:'Morning',PM:'Afternoon',Night:'Night'};
+const isSn=a=>/^\s*SN/i.test(a||'');
+const lines=t=>String(t||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n};
+
+/* ===== defaults ===== */
+const DEF_BOATS=[
+ ['Manta','MB-101',17,3,'Red'],['Barracuda','MB-102',12,2,''],['Hammerhead','MB-103',12,3,'Green'],
+ ['Turtle','MB-104',12,3,'Yellow'],['Dolphin','MB-105',12,2,'Blue'],['Wahoo','MB-106',10,2,''],
+ ['Sailfish','SB-201',4,1,''],['Grouper','SB-202',10,2,''],['Remora','SB-203',3,2,''],
+ ['Nomad','SB-204',6,2,''],['Seahorse','SB-205',6,1,'']
+].map(b=>({name:b[0],reg:b[1],seats:b[2],crew:b[3],colour:b[4],size:b[2]>=12?'Big Boat':'Small Boat'}));
+const DEF_LISTS=()=>({
+ boats:JSON.parse(JSON.stringify(DEF_BOATS)),
+ spareTanks:1,spareRegs:1,
+ tripTypes:['Two-tank','One dive','Island drop-off','Afternoon','Night'],
+ activities:['Dive trip','Snorkel trip','Watersports','Training','Private charter'],
+ sites:['North Reef','Coral Garden','Turtle Bay','Wreck Point','Blue Wall','Lighthouse Reef','Pinnacle','Sandy Bay','Cave Point','South Reef'],
+ certs:['None','DSD','OW','AOW','Rescue','DM','Instructor'],
+ diveActs:['Snorkel / boat','Fun dive','DSD1','DSD2','OW1','OW2','OW3','OW4','Buoyancy','Naturalist','Deep','Wreck','Nav','Photo','Night','Fish ID','Staff','Snorkel'],
+ tanks:['12ltr','8ltr','10ltr','11ltr','15ltr','Nitrox 12ltr','Nitrox 15ltr'],
+ bcd:['XS','S','M','L','XL','XXL'],wet:['XS','S','M','L','XL','XXL','Kids'],
+ boots:['35','36','37','38','39','40','41','42','43','44','45','46'],fins:['XS/S','S/M','M/L','L/XL','XL'],
+ snacks:['Sandwich','Veg sandwich','Chicken','Tuna','Fruit','Pack lunch'],
+ colours:['Red','Green','Blue','Yellow'],offices:['Head office','Call center','Dive center','Walk-in','Agent'],
+ duties:['Ops manager','Front desk','Pool','Compressor','Watersports','Speedboat'],
+ trainActs:['DSD1','DSD2','OW1','OW2','OW3','OW4','Refresher','Pool session','Specialty'],
+ roles:['Captain','Instructor','Divemaster','Deckhand','Pool','Compressor','Ops Manager','Shop / Front','Call Center'],
+ assetTypes:['Tank','BCD','Wetsuit','Boots','Fins','Regulator','Mask/Snorkel','Compressor','Boat','Other'],
+ statuses:['OK','In service','Out of order','Retired']
+});
+const GUEST_DEF={trip:'',name:'',phone:'',nat:'',cert:'',logged:'',last:'',act1:'',act2:'',tank:'12ltr',tw:false,fullEq:false,bcd:'',wet:'',boots:'',fins:'',reg:false,mask:false,snack:'',bus:false,meet:'',cost:'',inv:'',bookedBy:'',bookedOn:'',office:'',guide:'',idCopy:false,form:false,checkedIn:false,rc1:false,rc2:false,notes:''};
+const TRIP_DEF={date:'',slot:'AM',boat:'',tripType:'Two-tank',activity:'Dive trip',site1:'',site2:'',colour:'',captain:'',g1:'',g2:'',g3:'',deck:'',notes:''};
+const SESS_DEF={date:'',name:'',phone:'',time:'',activity:'',snack:'',cost:'',inv:'',staff:'',bookedBy:'',bookedOn:'',notes:''};
+const COLL=['staff','leave','trips','guests','sessions','duties','assets'];
+
+/* ===== state ===== */
+let S=null;
+const UI={tab:'board',date:todayS(),filter:'all',q:'',tripId:null,modal:null,hoShow:null,hoPlan:null,hoFrom:'',err:''};
+let memStore=null;
+function blank(){const o={v:4,me:'',lastExport:0,lastImport:0,lists:DEF_LISTS(),tomb:{},log:[]};COLL.forEach(c=>o[c]=[]);return o}
+function normalize(d){
+ const o=blank();
+ if(!d||typeof d!=='object')return o;
+ o.me=d.me||'';o.qsHide=!!d.qsHide;o.lastExport=d.lastExport||0;o.lastImport=d.lastImport||0;
+ const L=d.lists||{};const dl=DEF_LISTS();
+ Object.keys(dl).forEach(k=>{
+  if(k==='boats')return;
+  if(Array.isArray(dl[k]))o.lists[k]=Array.isArray(L[k])&&L[k].length?L[k].map(String):dl[k];
+  else o.lists[k]=typeof L[k]==='number'?L[k]:dl[k];
+ });
+ if(Array.isArray(L.boats)&&L.boats.length){
+  o.lists.boats=L.boats.filter(b=>b&&b.name).map(b=>({name:String(b.name),reg:String(b.reg||''),seats:num(b.seats),crew:num(b.crew),colour:b.colour||'',size:b.size==='Big Boat'||b.size==='Small Boat'?b.size:(num(b.seats)>=12?'Big Boat':'Small Boat')}));
+ }
+ o.tomb=d.tomb&&typeof d.tomb==='object'?d.tomb:{};
+ o.log=Array.isArray(d.log)?d.log.slice(-200):[];
+ COLL.forEach(c=>{o[c]=(Array.isArray(d[c])?d[c]:[]).filter(r=>r&&typeof r==='object').map(r=>{
+  const x=Object.assign({},r);if(!x.id)x.id=uid(c[0]);if(!x.u)x.u=1;return x})});
+ o.trips=o.trips.map(t=>Object.assign({},TRIP_DEF,t));
+ o.guests=o.guests.map(g=>{
+  const x=Object.assign({},GUEST_DEF,g);
+  if(g.act!==undefined&&!g.act1){x.act1=g.act}
+  if(g.by!==undefined&&!g.office){x.office=g.by}
+  delete x.act;delete x.by;
+  ['tw','fullEq','reg','mask','bus','idCopy','form','checkedIn','rc1','rc2'].forEach(k=>x[k]=!!x[k]);
+  return x});
+ o.sessions=o.sessions.map(s=>Object.assign({},SESS_DEF,s));
+ return o;
+}
+function load(){
+ let raw=null;
+ try{raw=localStorage.getItem(KEY)}catch(e){raw=memStore}
+ if(raw){try{S=normalize(JSON.parse(raw));return}catch(e){}}
+ S=blank();seed();save();
+}
+function save(){
+ const s=JSON.stringify(S);
+ try{localStorage.setItem(KEY,s)}catch(e){memStore=s}
+}
+function logIt(m){S.log.push({t:nowTs(),who:S.me||'',m:m});if(S.log.length>200)S.log.shift()}
+function put(c,rec){rec.u=nowTs();const i=S[c].findIndex(r=>r.id===rec.id);if(i<0)S[c].push(rec);else S[c][i]=rec;delete S.tomb[rec.id];return rec}
+function del(c,id){const i=S[c].findIndex(r=>r.id===id);if(i>=0){S[c].splice(i,1);S.tomb[id]=nowTs()}}
+const byId=(c,id)=>S[c].find(r=>r.id===id);
+const boatOf=n=>S.lists.boats.find(b=>b.name===n);
+const staffNames=()=>S.staff.map(s=>s.name).filter(Boolean).sort((a,b)=>a.localeCompare(b));
+const staffByName=n=>S.staff.find(s=>s.name===n);
+const tripsOn=d=>S.trips.filter(t=>t.date===d);
+const tripsAt=(d,sl)=>tripsOn(d).filter(t=>t.slot===sl).sort((a,b)=>String(a.boat).localeCompare(b.boat));
+const guestsOf=id=>S.guests.filter(g=>g.trip===id);
+const crewOf=t=>[t.g1,t.g2,t.g3,t.deck].filter(Boolean);
+function onLeave(name,d){return S.leave.some(l=>l.staff===name&&l.from<=d&&(l.to||l.from)>=d)}
+const dive1=g=>!!g.act1&&!isSn(g.act1);
+const dive2=g=>!!g.act2&&!isSn(g.act2);
+const tankKey=g=>g.tank||'12ltr';
+
+/* ===== warnings ===== */
+function warn(t){
+ const w=[];const b=boatOf(t.boat);const gs=guestsOf(t.id);
+ if(b&&b.seats&&gs.length>b.seats)w.push({l:'bad',m:'Over capacity: '+gs.length+' guests, '+b.seats+' seats'});
+ if(b){const c=[t.g1,t.g2,t.g3,t.deck].filter(Boolean).length;if(c>b.crew)w.push({l:'bad',m:'Crew over limit: '+c+' guides/deck, boat allows '+b.crew+' (captain not counted)'})}
+ if(!t.captain)w.push({l:'bad',m:'No captain assigned'});
+ S.trips.forEach(o=>{if(o.id!==t.id&&o.date===t.date&&o.slot===t.slot&&t.boat&&o.boat===t.boat)w.push({l:'bad',m:'Boat already on another trip this slot'})});
+ const mine=[t.captain,t.g1,t.g2,t.g3,t.deck].filter(Boolean);
+ const seen={};
+ mine.forEach(n=>{
+  if(seen[n])return;seen[n]=1;
+  const clash=S.trips.find(o=>o.id!==t.id&&o.date===t.date&&o.slot===t.slot&&[o.captain,o.g1,o.g2,o.g3,o.deck].indexOf(n)>=0);
+  if(clash)w.push({l:'bad',m:n+' is also on '+(clash.boat||'another boat')+' this slot'});
+  if(onLeave(n,t.date))w.push({l:'bad',m:n+' is on leave'});
+ });
+ const noId=gs.filter(g=>!g.idCopy).length,noForm=gs.filter(g=>!g.form).length,noInv=gs.filter(g=>!String(g.inv).trim()).length,noD1=gs.filter(g=>!g.act1).length;
+ if(noId)w.push({l:'warn',m:noId+' without ID copy'});
+ if(noForm)w.push({l:'warn',m:noForm+' form not signed'});
+ if(noInv)w.push({l:'warn',m:noInv+' without invoice / pay code'});
+ if(noD1)w.push({l:'warn',m:noD1+' with no dive 1 activity'});
+ return w;
+}
+const hasBad=t=>warn(t).some(x=>x.l==='bad');
+
+/* ===== needs ===== */
+function bump(o,k,n){if(!k)return;o[k]=(o[k]||0)+(n||1)}
+function needsFor(d){
+ const N={tanks:{},bcd:{},wet:{},boots:{},fins:{},regs:0,masks:0,fullEq:0,tw:0,bus:0,lunchBoat:0,lunchTrain:0,spare:0,spareRegs:0,divers:0,boatsDiving:0};
+ tripsOn(d).forEach(t=>{
+  let dv=0;
+  guestsOf(t.id).forEach(g=>{
+   const n=(dive1(g)?1:0)+(dive2(g)?1:0);
+   if(n){bump(N.tanks,tankKey(g),n);dv++}
+   if(g.fullEq)N.fullEq++;
+   if(g.bcd)bump(N.bcd,g.bcd);if(g.wet)bump(N.wet,g.wet);if(g.boots)bump(N.boots,g.boots);if(g.fins)bump(N.fins,g.fins);
+   if(g.reg)N.regs++;if(g.mask)N.masks++;if(g.tw)N.tw++;if(g.bus)N.bus++;if(g.snack)N.lunchBoat++;
+  });
+  N.divers+=dv;
+  if(dv){N.boatsDiving++;N.spare+=num(S.lists.spareTanks);N.spareRegs+=num(S.lists.spareRegs)}
+ });
+ if(N.spare)bump(N.tanks,'12ltr',N.spare);
+ S.sessions.filter(s=>s.date===d).forEach(s=>{if(s.snack)N.lunchTrain++});
+ N.regsTotal=N.regs+N.spareRegs;
+ N.short=[];
+ const chk=(type,map)=>{
+  const has=S.assets.some(a=>a.type===type);
+  Object.keys(map).forEach(sz=>{
+   if(!has){N.short.push({type,size:sz,need:map[sz],none:true});return}
+   const st=S.assets.filter(a=>a.type===type&&String(a.size).trim().toLowerCase()===sz.toLowerCase()&&a.status==='OK').reduce((s,a)=>s+num(a.qty),0);
+   if(st<map[sz])N.short.push({type,size:sz,need:map[sz],stock:st});
+  });
+ };
+ chk('Tank',N.tanks);chk('BCD',N.bcd);chk('Wetsuit',N.wet);chk('Boots',N.boots);chk('Fins',N.fins);
+ if(N.regsTotal)chk('Regulator',{'':N.regsTotal});
+ if(N.masks)chk('Mask/Snorkel',{'':N.masks});
+ return N;
+}
+
+/* ===== demo seed ===== */
+function seed(){
+ const L=S.lists;const T=todayS();
+ let sat=T;while(pd(sat).getDay()!==6)sat=addD(sat,1);
+ const mk=(c,r)=>{if(!r.id)r.id=uid(c[0]);r.u=nowTs();r.demo=1;S[c].push(r);return r};
+ const mob=i=>'555-01'+pad(i);
+ let k=0;
+ ['Captain A','Captain B','Captain C','Captain D'].forEach(n=>mk('staff',{name:n,role:'Captain',mobile:mob(++k)}));
+ ['Guide 1','Guide 2','Guide 3','Guide 4','Guide 5'].forEach(n=>mk('staff',{name:n,role:'Instructor',mobile:mob(++k)}));
+ ['Deck 1','Deck 2','Deck 3'].forEach(n=>mk('staff',{name:n,role:'Deckhand',mobile:mob(++k)}));
+ [['Pool 1','Pool'],['Compressor 1','Compressor'],['Ops Manager 1','Ops Manager'],['Shop 1','Shop / Front'],['Call Center 1','Call Center']].forEach(a=>mk('staff',{name:a[0],role:a[1],mobile:mob(++k)}));
+ mk('leave',{staff:'Guide 3',from:sat,to:sat,type:'Day off'});
+ const nats=['UAE','UK','India','Russia','Germany','Philippines','Egypt','France'];
+ const certs=['None','OW','AOW','None','DSD','OW','Rescue','None'];
+ const acts1=['Snorkel / boat','OW1','Fun dive','DSD1','Deep','Fun dive','OW2','Wreck'];
+ const acts2=['','OW2','Fun dive','','Nav','Fun dive','OW3','Fish ID'];
+ const bcds=['S','M','S','L','S','M','XL','S'];
+ const wets=['S','M','M','L','S','L','XL','M'];
+ let gi=0;
+ function trip(date,slot,boat,tt,act,s1,s2,cap,g1,g2,g3,deck,n,opt){
+  opt=opt||{};
+  const b=boatOf(boat)||{};
+  const t=mk('trips',Object.assign({},TRIP_DEF,{date,slot,boat,tripType:tt,activity:act,site1:s1,site2:s2,colour:b.colour||'',captain:cap,g1,g2,g3,deck,notes:opt.notes||''}));
+  for(let i=0;i<n;i++){
+   gi++;const j=gi%8;
+   const sn=opt.snorkel;
+   const g=Object.assign({},GUEST_DEF,{trip:t.id,name:'Demo Guest '+pad(gi),phone:'555-0'+String(100+gi),nat:nats[j],cert:certs[j],
+    act1:sn?'Snorkel':acts1[j],act2:sn?'':acts2[j],tank:'12ltr',bcd:sn?'':bcds[j],wet:sn?'':wets[j],boots:sn?'':String(38+(j%6)),fins:sn?'':'M/L',reg:!sn&&j%3!==0,mask:sn,
+    snack:j%2?'Sandwich':'',bus:j%4===0,meet:j%3===0?'8:30 jetty':'',cost:String(sn?150:j===0?0:350),
+    inv:i%5===3?'':(i%4===0?'STUDENT':'INV'+(2300+gi)),bookedBy:i%2?'MIA':'LEO',bookedOn:'',office:i%2?'Call center':'Head office',
+    guide:i%2?g1:(g2||g1),idCopy:i%6!==2,form:i%5!==1,checkedIn:false});
+   mk('guests',g);
+  }
+  return t;
+ }
+ trip(sat,'AM','Manta','Two-tank','Dive trip','North Reef','Coral Garden','Captain A','Guide 1','Guide 2','Guide 3','Deck 1',8);
+ trip(sat,'AM','Barracuda','Two-tank','Dive trip','Turtle Bay','Wreck Point','Captain B','Guide 2','Guide 4','','Deck 2',6);
+ trip(sat,'AM','Hammerhead','One dive','Training','Blue Wall','','Captain C','Guide 5','','','Deck 3',5);
+ trip(sat,'AM','Sailfish','One dive','Watersports','','','','','','','Deck 3',4,{notes:'Watersports, no captain yet'});
+ trip(sat,'AM','Remora','Island drop-off','Dive trip','Pinnacle','','Captain D','','','','',2);
+ trip(sat,'PM','Nomad','Afternoon','Snorkel trip','Sandy Bay','','Captain D','','','','Deck 1',3,{snorkel:1});
+ if(sat!==T){
+  trip(T,'AM','Manta','Two-tank','Dive trip','North Reef','Coral Garden','Captain A','Guide 1','Guide 4','','Deck 1',5);
+  trip(T,'AM','Nomad','One dive','Snorkel trip','Sandy Bay','','Captain B','','','','Deck 2',3,{snorkel:1});
+  trip(addD(T,1),'AM','Hammerhead','Two-tank','Dive trip','Lighthouse Reef','Cave Point','Captain C','Guide 2','Guide 5','','Deck 3',4);
+ }
+ mk('sessions',{date:sat,name:'Demo Trainee 1',phone:'555-0901',time:'14:00',activity:'DSD2',snack:'Sandwich',cost:'400',inv:'STUDENT',staff:'Guide 5',bookedBy:'LEO',bookedOn:'',notes:'Pool then shore entry'});
+ mk('sessions',{date:sat,name:'Demo Trainee 2',phone:'555-0902',time:'16:00',activity:'OW1',snack:'',cost:'',inv:'',staff:'Guide 4',bookedBy:'MIA',bookedOn:'',notes:''});
+ const du=(d,n,a,b)=>mk('duties',{id:d+'|'+n,date:d,duty:n,s1:a,s2:b||''});
+ du(sat,'Ops manager','Ops Manager 1');du(sat,'Front desk','Shop 1');du(sat,'Pool','Pool 1');du(sat,'Compressor','Compressor 1');du(sat,'Watersports','Deck 3');
+ const as=(type,size,qty,extra)=>mk('assets',Object.assign({type,size,qty,status:'OK',last:'',next:'',loc:'Main store',notes:''},extra||{}));
+ as('Tank','12ltr',30);as('Tank','15ltr',6);as('Tank','Nitrox 12ltr',6);
+ ['XS:2','S:6','M:12','L:10','XL:4'].forEach(x=>{const p=x.split(':');as('BCD',p[0],+p[1])});
+ ['S:8','M:12','L:10','XL:5'].forEach(x=>{const p=x.split(':');as('Wetsuit',p[0],+p[1])});
+ as('Boots','38',4);as('Boots','40',6);as('Boots','42',8);as('Fins','M/L',14);as('Regulator','',20);as('Mask/Snorkel','',25);
+ as('Compressor','Compressor A',1,{last:addD(T,-80),next:addD(T,10),notes:'Service due soon'});
+ as('Compressor','Compressor B',1,{last:addD(T,-200),next:addD(T,-5),notes:'Overdue'});
+ logIt('Demo data loaded');
+}
+
+/* ===== view helpers ===== */
+const short=n=>String(n||'');
+function opts(arr,val,noBlank){
+ let h=noBlank?'':'<option value=""></option>';
+ if(val&&arr.indexOf(val)<0)h+='<option selected>'+esc(val)+'</option>';
+ return h+arr.map(o=>'<option'+(o===val?' selected':'')+'>'+esc(o)+'</option>').join('');
+}
+const boatNames=()=>S.lists.boats.map(b=>b.name);
+function tbtn(label,act,attrs,cls){return '<button class="btn '+(cls||'')+'" data-act="'+act+'" '+(attrs||'')+'>'+label+'</button>'}
+function dayStats(d){
+ const ts=tripsOn(d);const o={trips:ts.length,guests:0,seats:0,here:0,miss:0,bad:0,amb:0,big:0,sm:0};
+ ts.forEach(t=>{
+  const gs=guestsOf(t.id),b=boatOf(t.boat);o.guests+=gs.length;o.seats+=b?b.seats:0;
+  gs.forEach(g=>{if(g.checkedIn)o.here++;if(!g.idCopy||!g.form)o.miss++});
+  const w=warn(t);if(w.some(x=>x.l==='bad'))o.bad++;else if(w.length)o.amb++;
+  if(b&&b.size==='Big Boat')o.big++;else o.sm++;
+ });
+ return o;
+}
+const dlt=(a,b)=>{const x=a-b;return x===0?'same':(x>0?'+':'')+x};
+function buildDatalists(){
+ const L=S.lists;const m=(id,a)=>'<datalist id="'+id+'">'+a.map(x=>'<option value="'+esc(x)+'">').join('')+'</datalist>';
+ let el=$('#dls');if(!el){el=document.createElement('div');el.id='dls';document.body.appendChild(el)}
+ el.innerHTML=m('dlActs',L.diveActs)+m('dlSites',L.sites)+m('dlCerts',L.certs)+m('dlActivity',L.activities)+m('dlTT',L.tripTypes)+m('dlTrain',L.trainActs)+m('dlOffice',L.offices)+m('dlRoles',L.roles);
+}
+
+/* ===== main render ===== */
+function render(){
+ let fk=null;const a=document.activeElement;
+ if(a&&$('#main').contains(a)&&a.getAttribute('data-act'))fk=[a.getAttribute('data-act'),a.getAttribute('data-id')||a.getAttribute('data-d')||''];
+ $$('#nav button').forEach(b=>{b.classList.toggle('on',b.dataset.t===UI.tab);b.setAttribute('aria-current',b.dataset.t===UI.tab?'page':'false')});
+ buildDatalists();
+ $('#main').innerHTML=VIEWS[UI.tab]();
+ renderBk();
+ if(fk){const e=$('#main [data-act="'+fk[0]+'"][data-id="'+fk[1]+'"]')||$('#main [data-act="'+fk[0]+'"][data-d="'+fk[1]+'"]');if(e)e.focus()}
+}
+function renderBk(){
+ const el=$('#bkPill');const t=Math.max(S.lastExport||0,0);
+ if(!t){el.className='pill-bk warn';el.textContent='No backup yet. Save one in Setup.'}
+ else{const days=Math.floor((nowTs()-t)/864e5);
+  if(days>=7){el.className='pill-bk warn';el.textContent='Last backup '+days+' days ago'}
+  else{el.className='pill-bk';el.textContent='Last backup '+(days?days+' days ago':'today')}}
+}
+function topbar(title,eyebrow,actions){
+ return '<header class="glass topbar"><div><div class="eyebrow">'+esc(eyebrow)+'</div><h1>'+esc(title)+'</h1></div><div class="tb-actions">'+(actions||'')+'</div></header>';
+}
+
+/* ===== board ===== */
+function cardHTML(t){
+ const b=boatOf(t.boat);const gs=guestsOf(t.id);const w=warn(t);
+ const bad=w.some(x=>x.l==='bad');
+ const seats=b?b.seats:0;const pct=seats?Math.min(100,Math.round(gs.length/seats*100)):0;
+ const over=seats&&gs.length>seats;
+ const tag=b?(b.size==='Big Boat'?'<span class="tag big">Big boat</span>':'<span class="tag small">Small boat</span>'):'<span class="tag small">Boat not in list</span>';
+ const guides=[t.g1,t.g2,t.g3].filter(Boolean);
+ let crew='<div class="crew">'+(t.captain?'<span class="chip">Capt. '+esc(t.captain)+'</span>':'<span class="nocrew">No captain</span>')+guides.map(n=>'<span class="chip">'+esc(n)+'</span>').join('')+(t.deck?'<span class="chip">Deck: '+esc(t.deck)+'</span>':'')+'</div>';
+ const ws=w.slice().sort((x,y)=>(x.l==='bad'?0:1)-(y.l==='bad'?0:1));
+ const wl=ws.length?'<ul class="warns">'+ws.slice(0,3).map(x=>'<li class="'+x.l+'">'+esc(x.m)+'</li>').join('')+(ws.length>3?'<li class="warn">+'+(ws.length-3)+' more</li>':'')+'</ul>':'<div class="okline">All clear</div>';
+ const here=gs.filter(g=>g.checkedIn).length;
+ const sites=[t.site1,t.site2].filter(Boolean).join(' / ')||'Site not set';
+ return '<div class="glass card'+(bad?' is-bad':'')+'" role="button" tabindex="0" data-act="opentrip" data-id="'+t.id+'" aria-label="Open '+esc(t.boat)+' '+esc(SLOTN[t.slot]||t.slot)+' trip">'
+ +'<div class="card-top"><span class="dot '+(t.colour?'c-'+esc(t.colour):'')+'" title="'+esc(t.colour||'No team colour')+'"></span><div class="card-title"><div class="boat">'+esc(t.boat||'No boat')+'</div><div class="sub">'+esc([b&&b.reg,t.tripType,t.activity].filter(Boolean).join(' · '))+'</div></div>'+tag+'</div>'
+ +'<div class="sites">'+esc(sites)+'</div>'
+ +'<div><div class="meter-row"><span>Guests</span><b>'+gs.length+(seats?' / '+seats:'')+'</b></div><div class="bar"><i class="'+(over?'over':'')+'" style="width:'+pct+'%"></i></div></div>'
+ +crew+wl
+ +'<div class="card-foot"><span>'+here+' of '+gs.length+' here</span><span>'+(b?b.seats+' + '+b.crew+' seats':'')+'</span></div></div>';
+}
+function needsHTML(d){
+ const N=needsFor(d);const L=S.lists;
+ const shortMap={};N.short.forEach(s=>{shortMap[s.type+'|'+s.size.toLowerCase()]=s});
+ const chip=(type,size,n,label)=>{
+  const s=shortMap[type+'|'+String(size).toLowerCase()];
+  if(s&&!s.none)return '<span class="pc short"><b>'+esc(label)+'</b> &times;'+n+' <em>short by '+(s.need-s.stock)+'</em></span>';
+  return '<span class="pc"><b>'+esc(label)+'</b> &times;'+n+'</span>';
+ };
+ const grp=(title,type,map,note)=>{
+  const ks=Object.keys(map);if(!ks.length)return '';
+  const none=S.assets.every(a=>a.type!==type);
+  return '<div class="pg"><h4>'+title+(none?' <span class="mut" style="text-transform:none;letter-spacing:0">(no stock listed, add it in Equipment)</span>':'')+'</h4><div class="chips">'+ks.sort().map(k=>chip(type,k,map[k],k||type)).join('')+'</div>'+(note||'')+'</div>';
+ };
+ const oth=[];
+ if(N.regsTotal)oth.push(['Regulators',N.regsTotal+' ('+N.regs+' rental + '+N.spareRegs+' spare)']);
+ if(N.masks)oth.push(['Mask / snorkel sets',N.masks]);
+ if(N.fullEq)oth.push(['Full equipment',N.fullEq]);
+ if(N.tw)oth.push(['Towels',N.tw]);
+ if(N.bus)oth.push(['Bus pick-ups',N.bus]);
+ if(N.lunchBoat||N.lunchTrain)oth.push(['Lunches','boats '+N.lunchBoat+' · training '+N.lunchTrain]);
+ let h='<section class="glass rc" aria-label="What to prepare"><h3>What to prepare <span class="hint">'+fmtD(d)+'</span></h3>';
+ if(!tripsOn(d).length&&!N.lunchTrain)return h+'<p class="hint">Nothing to prepare, no trips on this day.</p></section>';
+ h+=grp('Tanks','Tank',N.tanks,N.spare?'<div class="hint" style="margin-top:4px">Includes '+N.spare+' spare ('+S.lists.spareTanks+' per boat with divers). Tanks counted per dive; blank tank = 12ltr.</div>':'');
+ h+=grp('BCD','BCD',N.bcd)+grp('Wetsuits','Wetsuit',N.wet)+grp('Boots','Boots',N.boots)+grp('Fins','Fins',N.fins);
+ if(oth.length)h+='<div class="pg"><h4>Other</h4><div class="chips">'+oth.map(o=>'<span class="pc"><b>'+o[0]+'</b> '+o[1]+'</span>').join('')+'</div></div>';
+ if(N.short.some(s=>!s.none))h+='<p class="okline" style="color:var(--bad)">Red items need more stock than the Equipment list shows as OK.</p>';
+ return h+'</section>';
+}
+function viewBoard(){
+ const d=UI.date;const st=dayStats(d);const lw=addD(d,-7);const ls=dayStats(lw);
+ const ws=weekStart(d);let wk='';
+ for(let i=0;i<7;i++){
+  const x=addD(ws,i);const s=dayStats(x);const p=s.seats?Math.min(100,Math.round(s.guests/s.seats*100)):0;
+  const dd=pd(x);
+  wk+='<div class="glass day'+(x===d?' sel':'')+((dd.getDay()===6||dd.getDay()===0)?' we':'')+'" role="button" tabindex="0" data-act="pickday" data-d="'+x+'" aria-label="'+fmtL(x)+', '+s.trips+' trips, '+s.guests+' guests"'+(x===d?' aria-current="date"':'')+'><span class="dw">'+DOW[dd.getDay()]+'</span><span class="dn">'+dd.getDate()+'</span><span class="dc">'+s.trips+' trips · '+s.guests+' guests</span><div class="mini"><i style="width:'+p+'%"></i></div></div>';
+ }
+ const pct=st.seats?Math.round(st.guests/st.seats*100):0;
+ const k=[
+  ['Trips',st.trips,st.big+' big · '+st.sm+' small','vs '+fmtD(lw)+': '+ls.trips+' ('+dlt(st.trips,ls.trips)+')',''],
+  ['Guests',st.guests,pct+'% of '+st.seats+' seats','vs '+fmtD(lw)+': '+ls.guests+' ('+dlt(st.guests,ls.guests)+')',''],
+  ['Needs action',st.bad,st.amb+' more with notes','Red = fix before departure',st.bad?'bad':'good'],
+  ['Paperwork missing',st.miss,'ID copy or form','<button class="k-link" data-act="gomissing">Show list</button>',st.miss?'warnk':'good'],
+  ['Checked in',st.here+' / '+st.guests,(st.guests?Math.round(st.here/st.guests*100):0)+'% arrived','Mark guests Here in the trip panel',st.guests&&st.here===st.guests?'good':'']
+ ];
+ const kp=k.map(x=>'<div class="glass kpi '+x[4]+'"><div class="k-l">'+x[0]+'</div><div class="k-v">'+x[1]+'</div><div class="k-s">'+x[2]+'</div><div class="k-d">'+x[3]+'</div></div>').join('');
+ let slots='';
+ SLOTS.forEach(sl=>{
+  const list=tripsAt(d,sl);
+  if(sl==='Night'&&!list.length)return;
+  slots+='<div><div class="slot-h"><h2>'+SLOTN[sl]+'</h2><span class="cnt">'+list.length+' trip'+(list.length===1?'':'s')+'</span>'+tbtn('+ Trip','newtrip','data-slot="'+sl+'"','sm ghost')+'</div>'
+  +(list.length?'<div class="cards">'+list.map(cardHTML).join('')+'</div>':'<div class="glass empty">No trips in this slot yet.</div>')+'</div>';
+ });
+ if(!tripsOn(d).length)slots='<div class="glass empty"><b>Nothing planned for '+fmtL(d)+'.</b><p class="hint" style="margin:6px 0 12px">Add a trip, or copy a day from the previous week.</p>'+tbtn('+ Add a trip','newtrip','data-slot="AM"')+' '+tbtn('Copy trips from '+fmtD(lw),'copyday','data-d="'+lw+'"','ghost')+'</div>'+slots;
+ const dutyRows=S.lists.duties.map(n=>{
+  const r=byId('duties',d+'|'+n)||{};const sn=staffNames();
+  return '<div class="duty"><span class="duty-name">'+esc(n)+'</span><span class="duty-sel"><select aria-label="'+esc(n)+' first" data-duty="'+esc(n)+'" data-slot="s1">'+opts(sn,r.s1)+'</select><select aria-label="'+esc(n)+' second" data-duty="'+esc(n)+'" data-slot="s2">'+opts(sn,r.s2)+'</select></span></div>';
+ }).join('');
+ const ss=S.sessions.filter(s=>s.date===d).sort((a,b)=>String(a.time).localeCompare(b.time));
+ const sess=ss.length?ss.map(s=>'<div class="li"><div><b>'+esc(s.name||'(no name)')+'</b><span class="sm2">'+esc([s.time,s.activity,s.staff].filter(Boolean).join(' · '))+'</span></div><button class="link" data-act="editsess" data-id="'+s.id+'">Edit</button></div>').join(''):'<p class="hint">No training or pool sessions.</p>';
+ const lv=S.leave.filter(l=>l.from<=d&&(l.to||l.from)>=d);
+ const lvh=lv.length?lv.map(l=>'<div class="li"><div><b>'+esc(l.staff)+'</b><span class="sm2">'+esc(l.type||'Leave')+'</span></div></div>').join(''):'<p class="hint">Nobody on leave.</p>';
+ const rail='<div class="col"><section class="glass rc"><h3>Non-dive duties</h3>'+dutyRows+'</section>'
+ +'<section class="glass rc"><h3>Training &amp; pool <button class="btn sm ghost" data-act="newsess">+ Add</button></h3>'+sess+'</section>'
+ +'<section class="glass rc"><h3>On leave today</h3>'+lvh+'</section></div>';
+ const acts='<button class="btn sm ghost" data-act="week" data-n="-7" aria-label="Previous week">&lsaquo; Week</button><button class="btn sm ghost" data-act="today">Today</button><button class="btn sm ghost" data-act="week" data-n="7" aria-label="Next week">Week &rsaquo;</button><input type="date" id="dayPick" value="'+d+'" aria-label="Pick a date">'
+ +'<button class="btn sm ghost" data-act="printday">Print day plan</button><button class="btn sm ghost" data-act="csvtrips">Export CSV</button>'+tbtn('+ New trip','newtrip','data-slot="AM"','sm');
+ const qs=S.qsHide?'':'<section class="glass qs" aria-label="Quick start"><h3>Quick start<button class="btn sm ghost" data-act="hideqs">Got it, hide</button></h3>'
+ +'<div class="st"><b class="n">1</b><span><b>Pick a day</b> in the week strip. Saturday has the busiest demo plan.</span></div>'
+ +'<div class="st"><b class="n">2</b><span><b>Click a boat card</b> to see guests, crew and warnings. Red means fix before departure.</span></div>'
+ +'<div class="st"><b class="n">3</b><span><b>Print the manifest</b> or day plan, or check <b>What to prepare</b> for tanks and gear.</span></div>'
+ +'<div class="st"><b class="n">4</b><span><b>Handover</b> swaps changes between two locations by file, with a preview before anything is applied.</span></div></section>';
+ return topbar('Day board',fmtL(d),acts)+qs+'<div class="week" role="group" aria-label="Week">'+wk+'</div><div class="kpis">'+kp+'</div>'
+ +'<div class="board"><div class="col">'+slots+needsHTML(d)+'</div>'+rail+'</div>';
+}
+
+/* ===== trip panel ===== */
+function liveHTML(t){
+ const b=boatOf(t.boat);const gs=guestsOf(t.id);const w=warn(t);
+ const seats=b?b.seats:0;const pct=seats?Math.min(100,Math.round(gs.length/seats*100)):0;
+ return '<div class="meter-row"><span>Guests vs seats</span><b>'+gs.length+(seats?' / '+seats:'')+(b?' · crew limit '+b.crew:'')+'</b></div><div class="bar"><i class="'+(seats&&gs.length>seats?'over':'')+'" style="width:'+pct+'%"></i></div>'
+ +(w.length?'<ul class="warns" style="margin-top:10px">'+w.map(x=>'<li class="'+x.l+'">'+esc(x.m)+'</li>').join('')+'</ul>':'<p class="okline" style="margin-top:8px">All clear</p>');
+}
+function guestRows(t){
+ const gs=guestsOf(t.id);
+ if(!gs.length)return '<tr><td colspan="12" class="empty">No guests yet. Use Add guest.</td></tr>';
+ const tg=(g,f,l)=>'<button class="tgl'+(g[f]?' on':'')+'" data-act="tog" data-id="'+g.id+'" data-f="'+f+'" aria-pressed="'+(!!g[f])+'">'+l+'</button>';
+ return gs.map((g,i)=>'<tr><td>'+(i+1)+'</td><td><b>'+esc(g.name||'(no name)')+'</b><span class="sm2">'+esc(g.phone)+'</span></td><td>'+esc(g.nat)+'</td><td>'+esc(g.cert)+'</td><td>'+esc(g.act1)+'</td><td>'+esc(g.act2)+'</td><td>'+esc(g.tank)+'</td><td>'+esc(g.inv)+'</td><td>'+tg(g,'idCopy','ID')+' '+tg(g,'form','Form')+'</td><td>'+tg(g,'checkedIn','Here')+'</td><td><button class="link" data-act="editguest" data-id="'+g.id+'">Edit</button></td></tr>').join('');
+}
+function staffSel(t,f,label){
+ return '<label class="f">'+label+'<select data-k="trips" data-id="'+t.id+'" data-f="'+f+'">'+opts(staffNames(),t[f])+'</select></label>';
+}
+function panelHTML(t){
+ const L=S.lists;
+ return '<div class="sheet" role="document"><div class="phead"><div><div class="eyebrow">'+fmtL(t.date)+' · '+SLOTN[t.slot]+'</div><h2 id="pTitle">'+esc(t.boat||'New trip')+'</h2></div><div class="acts">'
+ +tbtn('Print manifest','printman','data-id="'+t.id+'"','sm')+tbtn('Duplicate','duptrip','data-id="'+t.id+'"','sm ghost')+tbtn('Delete trip','deltrip','data-id="'+t.id+'"','sm danger')+tbtn('Close','closepanel','','sm ghost')+'</div></div>'
+ +'<div class="box"><div class="grid">'
+ +'<label class="f">Date<input type="date" data-k="trips" data-id="'+t.id+'" data-f="date" value="'+esc(t.date)+'"></label>'
+ +'<label class="f">Slot<select data-k="trips" data-id="'+t.id+'" data-f="slot">'+opts(SLOTS,t.slot,1)+'</select></label>'
+ +'<label class="f span2">Boat<select data-k="trips" data-id="'+t.id+'" data-f="boat">'+opts(boatNames(),t.boat)+'</select></label>'
+ +'<label class="f">Trip type<input list="dlTT" data-k="trips" data-id="'+t.id+'" data-f="tripType" value="'+esc(t.tripType)+'"></label>'
+ +'<label class="f">Activity<input list="dlActivity" data-k="trips" data-id="'+t.id+'" data-f="activity" value="'+esc(t.activity)+'"></label>'
+ +'<label class="f">Site, dive 1<input list="dlSites" data-k="trips" data-id="'+t.id+'" data-f="site1" value="'+esc(t.site1)+'"></label>'
+ +'<label class="f">Site, dive 2<input list="dlSites" data-k="trips" data-id="'+t.id+'" data-f="site2" value="'+esc(t.site2)+'"></label>'
+ +'<label class="f">Team colour<select data-k="trips" data-id="'+t.id+'" data-f="colour">'+opts(L.colours,t.colour)+'</select></label>'
+ +staffSel(t,'captain','Captain')+staffSel(t,'g1','Guide 1')+staffSel(t,'g2','Guide 2')+staffSel(t,'g3','Guide 3')+staffSel(t,'deck','Deckhand')
+ +'<label class="f span2">Notes<input data-k="trips" data-id="'+t.id+'" data-f="notes" value="'+esc(t.notes)+'" placeholder="Meet time, special requests"></label>'
+ +'</div><div id="pLive" style="margin-top:14px">'+liveHTML(t)+'</div></div>'
+ +'<div class="box"><div class="phead" style="margin-bottom:8px"><h3>Guests</h3>'+tbtn('+ Add guest','newguest','data-trip="'+t.id+'"','sm')+'</div><div class="tw"><table><thead><tr><th>#</th><th>Guest</th><th>Nat.</th><th>Cert</th><th>Dive 1</th><th>Dive 2</th><th>Tank</th><th>Inv #</th><th>Docs</th><th>Arrived</th><th></th></tr></thead><tbody id="pGuests">'+guestRows(t)+'</tbody></table></div></div></div>';
+}
+function openTrip(id,focus){
+ const t=byId('trips',id);if(!t)return;
+ UI.tripId=id;UI.prevFocus=document.activeElement;
+ const p=$('#panel');p.innerHTML=panelHTML(t);p.classList.add('open');
+ const f=focus?$('#panel [data-act="'+focus+'"]'):$('#panel [data-act=closepanel]');if(f)f.focus();
+}
+function closePanel(){
+ const id=UI.tripId;UI.tripId=null;$('#panel').classList.remove('open');$('#panel').innerHTML='';render();
+ const e=id&&$('#main [data-act="opentrip"][data-id="'+id+'"]');
+ if(e)e.focus();else if(UI.prevFocus&&document.contains(UI.prevFocus))UI.prevFocus.focus();
+}
+function refreshPanel(){
+ const t=byId('trips',UI.tripId);if(!t)return;
+ const l=$('#pLive');if(l)l.innerHTML=liveHTML(t);
+ const g=$('#pGuests');if(g)g.innerHTML=guestRows(t);
+ const h=$('#pTitle');if(h)h.textContent=t.boat||'New trip';
+ render();
+}
+
+/* ===== modals ===== */
+function fld(f,vals){
+ if(f.h)return '<div class="sech span4">'+esc(f.h)+'</div>';
+ const v=vals[f.n]!==undefined?vals[f.n]:'';
+ const sp=f.s==='4'?' span4':f.s==='2'?' span2':'';
+ const id='m_'+f.n;
+ if(f.t==='check')return '<label class="chk'+sp+'"><input type="checkbox" id="'+id+'" name="'+f.n+'"'+(v?' checked':'')+'>'+esc(f.l)+'</label>';
+ let el;
+ if(f.t==='select')el='<select id="'+id+'" name="'+f.n+'">'+opts(f.o,v)+'</select>';
+ else if(f.t==='textarea')el='<textarea id="'+id+'" name="'+f.n+'" rows="3">'+esc(v)+'</textarea>';
+ else el='<input id="'+id+'" name="'+f.n+'" type="'+(f.t||'text')+'" value="'+esc(v)+'"'+(f.dl?' list="'+f.dl+'"':'')+(f.t==='number'?' step="any"':'')+'>';
+ return '<label class="f'+sp+'">'+esc(f.l)+el+(f.chips?'<span class="codes">'+f.chips.map(c=>'<button type="button" class="fchip" data-act="invcode" data-v="'+esc(c)+'">'+esc(c)+'</button>').join('')+'</span>':'')+'</label>';
+}
+function openModal(k,rec,title,fields,extra){
+ UI.modal={k:k,id:rec.id,rec:rec,isNew:!!extra&&extra.isNew,trip:extra&&extra.trip};
+ UI.prevFocusM=document.activeElement;
+ const m=$('#modal');
+ m.innerHTML='<div class="sheet narrow"><div class="phead"><h2>'+esc(title)+'</h2><div class="acts">'+tbtn('Save','savemodal','','sm')+tbtn('Cancel','closemodal','','sm ghost')+(extra&&extra.isNew?'':tbtn('Delete','delmodal','','sm danger'))+'</div></div><form id="mform" onsubmit="return false"><div class="grid">'+fields.map(f=>fld(f,rec)).join('')+'</div></form></div>';
+ m.classList.add('open');
+ const first=$('#mform input,#mform select,#mform textarea');if(first)first.focus();
+}
+function closeModal(){UI.modal=null;$('#modal').classList.remove('open');$('#modal').innerHTML='';if(UI.prevFocusM&&document.contains(UI.prevFocusM))UI.prevFocusM.focus()}
+function collectForm(rec,fields){
+ fields.forEach(f=>{if(f.h)return;const e=$('#m_'+f.n);if(!e)return;rec[f.n]=e.type==='checkbox'?e.checked:(e.type==='number'?e.value:e.value.trim())});
+ return rec;
+}
+function guestFields(){
+ const L=S.lists;
+ return [{h:'Guest'},{n:'name',l:'Customer name',s:'2'},{n:'phone',l:'Contact no.',t:'tel'},{n:'nat',l:'Nationality'},{n:'cert',l:'Certification',dl:'dlCerts'},{n:'logged',l:'Logged dives',t:'number'},{n:'last',l:'Last dive',t:'date'},
+ {h:'Dives'},{n:'act1',l:'Dive 1 activity',dl:'dlActs'},{n:'act2',l:'Dive 2 activity',dl:'dlActs'},{n:'tank',l:'Tank / gas',t:'select',o:L.tanks},{n:'guide',l:'Guide / instructor',t:'select',o:staffNames()},
+ {h:'Equipment'},{n:'fullEq',l:'Full equipment',t:'check'},{n:'bcd',l:'BCD',t:'select',o:L.bcd},{n:'wet',l:'Wetsuit',t:'select',o:L.wet},{n:'boots',l:'Boots',t:'select',o:L.boots},{n:'fins',l:'Fins',t:'select',o:L.fins},{n:'reg',l:'Rental regulator',t:'check'},{n:'mask',l:'Mask / snorkel',t:'check'},{n:'tw',l:'Towel',t:'check'},
+ {h:'Meals and transport'},{n:'snack',l:'Sandwich / lunch',t:'select',o:L.snacks},{n:'bus',l:'Bus pick-up',t:'check'},{n:'meet',l:'Meet time and place',s:'2'},
+ {h:'Payment and booking'},{n:'cost',l:'Cost',t:'number'},{n:'inv',l:'Invoice # or code',chips:['STUDENT','PAY ON SITE','STAFF'],s:'2'},{n:'bookedBy',l:'Booked by'},{n:'bookedOn',l:'Booked on',t:'date'},{n:'office',l:'Office',dl:'dlOffice'},
+ {h:'Documents and check-in'},{n:'idCopy',l:'ID copy taken',t:'check'},{n:'form',l:'Form signed',t:'check'},{n:'checkedIn',l:'Arrived / checked in',t:'check'},{n:'notes',l:'Notes',t:'textarea',s:'4'}];
+}
+function sessFields(){
+ return [{n:'date',l:'Date',t:'date'},{n:'time',l:'Time',t:'time'},{n:'name',l:'Customer name',s:'2'},{n:'phone',l:'Contact no.',t:'tel'},{n:'activity',l:'Activity',dl:'dlTrain'},{n:'staff',l:'Instructor',t:'select',o:staffNames()},{n:'snack',l:'Sandwich / lunch',t:'select',o:S.lists.snacks},{n:'cost',l:'Cost',t:'number'},{n:'inv',l:'Invoice # or code',chips:['STUDENT','PAY ON SITE','STAFF'],s:'2'},{n:'bookedBy',l:'Booked by'},{n:'bookedOn',l:'Booked on',t:'date'},{n:'notes',l:'Notes',t:'textarea',s:'4'}];
+}
+const staffFields=()=>[{n:'name',l:'Name',s:'2'},{n:'role',l:'Role',dl:'dlRoles'},{n:'mobile',l:'Mobile',t:'tel'}];
+const leaveFields=()=>[{n:'staff',l:'Staff',t:'select',o:staffNames(),s:'2'},{n:'from',l:'From',t:'date'},{n:'to',l:'To',t:'date'},{n:'type',l:'Type (leave, off, sick)',s:'2'}];
+const assetFields=()=>[{n:'type',l:'Type',t:'select',o:S.lists.assetTypes},{n:'size',l:'Size / name'},{n:'qty',l:'Quantity',t:'number'},{n:'status',l:'Status',t:'select',o:S.lists.statuses},{n:'last',l:'Last service',t:'date'},{n:'next',l:'Next service due',t:'date'},{n:'loc',l:'Location',s:'2'},{n:'notes',l:'Notes',s:'4'}];
+function fieldsFor(k){return {guest:guestFields,sess:sessFields,staff:staffFields,leave:leaveFields,asset:assetFields}[k]()}
+const COLLOF={guest:'guests',sess:'sessions',staff:'staff',leave:'leave',asset:'assets'};
+
+/* ===== bookings ===== */
+function bkRows(){
+ const d=UI.date;const ws=weekStart(d);
+ let rows=S.guests.map(g=>({g:g,t:byId('trips',g.trip)})).filter(r=>r.t);
+ if(UI.scope==='day')rows=rows.filter(r=>r.t.date===d);
+ else if(UI.scope==='week')rows=rows.filter(r=>r.t.date>=ws&&r.t.date<=addD(ws,6));
+ const f=UI.filter;
+ if(f==='docs')rows=rows.filter(r=>!r.g.idCopy||!r.g.form);
+ if(f==='inv')rows=rows.filter(r=>!String(r.g.inv).trim());
+ if(f==='here')rows=rows.filter(r=>!r.g.checkedIn);
+ const q=UI.q.trim().toLowerCase();
+ if(q)rows=rows.filter(r=>[r.g.name,r.g.phone,r.g.inv,r.g.bookedBy,r.t.boat,r.g.nat].join(' ').toLowerCase().indexOf(q)>=0);
+ return rows.sort((a,b)=>(a.t.date+a.t.slot+a.t.boat).localeCompare(b.t.date+b.t.slot+b.t.boat));
+}
+function bkTable(){
+ const rows=bkRows();
+ const pill=(v,l)=>'<span class="pill '+(v?'y':'n')+'">'+l+(v?'':' missing')+'</span>';
+ if(!rows.length)return '<div class="empty">No guests match'+(UI.q||UI.filter!=='all'?' these filters':' this view')+'. '+(UI.q||UI.filter!=='all'?'<button class="link" data-act="resetfilters">Clear filters</button>':'')+'</div>';
+ return '<div class="tw"><table><thead><tr><th>Date</th><th>Boat</th><th>Guest</th><th>Cert</th><th>D1 / D2</th><th>Inv #</th><th>Cost</th><th>Booked</th><th>Docs</th><th>Here</th></tr></thead><tbody>'
+ +rows.map(r=>{const g=r.g,t=r.t;return '<tr><td>'+fmtD(t.date)+'<span class="sm2">'+t.slot+'</span></td><td>'+esc(short(t.boat))+'</td><td><button class="link" data-act="editguest" data-id="'+g.id+'">'+esc(g.name||'(no name)')+'</button><span class="sm2">'+esc(g.phone)+'</span></td><td>'+esc(g.cert)+'</td><td>'+esc(g.act1)+(g.act2?' / '+esc(g.act2):'')+'</td><td>'+(String(g.inv).trim()?esc(g.inv):'<span class="pill w">none</span>')+'</td><td>'+esc(g.cost)+'</td><td>'+esc(g.bookedBy)+'<span class="sm2">'+esc(g.office)+(g.bookedOn?' '+esc(g.bookedOn):'')+'</span></td><td>'+pill(g.idCopy,'ID')+' '+pill(g.form,'Form')+'</td><td>'+(g.checkedIn?'<span class="pill y">Here</span>':'')+'</td></tr>'}).join('')+'</tbody></table></div><p class="hint" style="margin-top:8px">'+rows.length+' guest'+(rows.length===1?'':'s')+'</p>';
+}
+function viewBookings(){
+ if(!UI.scope)UI.scope='day';
+ const chip=(grp,v,l)=>'<button class="fchip'+(UI[grp]===v?' on':'')+'" data-act="'+(grp==='scope'?'scope':'filter')+'" data-v="'+v+'" aria-pressed="'+(UI[grp]===v)+'">'+l+'</button>';
+ const ss=S.sessions.filter(s=>UI.scope==='all'||(UI.scope==='day'?s.date===UI.date:(s.date>=weekStart(UI.date)&&s.date<=addD(weekStart(UI.date),6)))).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ const sess=ss.length?'<div class="tw"><table><thead><tr><th>Date</th><th>Time</th><th>Customer</th><th>Activity</th><th>Instructor</th><th>Inv #</th><th>Cost</th><th>Booked</th></tr></thead><tbody>'+ss.map(s=>'<tr><td>'+fmtD(s.date)+'</td><td>'+esc(s.time)+'</td><td><button class="link" data-act="editsess" data-id="'+s.id+'">'+esc(s.name||'(no name)')+'</button><span class="sm2">'+esc(s.phone)+'</span></td><td>'+esc(s.activity)+'</td><td>'+esc(s.staff)+'</td><td>'+(String(s.inv).trim()?esc(s.inv):'<span class="pill w">none</span>')+'</td><td>'+esc(s.cost)+'</td><td>'+esc(s.bookedBy)+(s.bookedOn?'<span class="sm2">'+esc(s.bookedOn)+'</span>':'')+'</td></tr>').join('')+'</tbody></table></div>':'<div class="empty">No training sessions in this view.</div>';
+ return topbar('Bookings','Guests and training','<input type="date" id="dayPick" value="'+UI.date+'" aria-label="Pick a date"><button class="btn sm ghost" data-act="csvbook">Export CSV</button>'+tbtn('+ Training session','newsess','','sm'))
+ +'<section class="glass rc"><h3>Boat guests</h3><div class="filters">'+chip('scope','day','This day')+chip('scope','week','This week')+chip('scope','all','All dates')+'<span style="width:10px"></span>'+chip('filter','all','All')+chip('filter','docs','Missing docs')+chip('filter','inv','No invoice')+chip('filter','here','Not checked in')+'<input type="search" id="bkq" placeholder="Search name, phone, invoice" value="'+esc(UI.q)+'" aria-label="Search guests"></div><div id="bkTable">'+bkTable()+'</div></section>'
+ +'<section class="glass rc"><h3>Training and pool sessions</h3>'+sess+'</section>';
+}
+
+/* ===== staff ===== */
+function viewStaff(){
+ const ws=weekStart(UI.date);const days=[0,1,2,3,4,5,6].map(i=>addD(ws,i));
+ const st=S.staff.slice().sort((a,b)=>a.name.localeCompare(b.name));
+ let ro='<div class="ro"><div class="h nm">Staff</div>'+days.map(x=>'<div class="h">'+fmtD(x)+'</div>').join('');
+ st.forEach(s=>{
+  ro+='<div class="nm">'+esc(s.name)+'<span class="sm2" style="display:block;font-weight:400;font-size:12px;color:var(--mut)">'+esc(s.role)+'</span></div>';
+  days.forEach(x=>{
+   if(onLeave(s.name,x)){ro+='<div class="lv">Leave</div>';return}
+   const parts=[];
+   tripsOn(x).forEach(t=>{if([t.captain,t.g1,t.g2,t.g3,t.deck].indexOf(s.name)>=0)parts.push(short(t.boat)+' '+t.slot)});
+   S.duties.filter(u=>u.date===x&&(u.s1===s.name||u.s2===s.name)).forEach(u=>parts.push(u.duty));
+   S.sessions.filter(q=>q.date===x&&q.staff===s.name).forEach(q=>parts.push('Training '+q.time));
+   ro+=parts.length?'<div class="wk">'+parts.map(esc).join('<br>')+'</div>':'<div class="fr">free</div>';
+  });
+ });
+ ro+='</div>';
+ const rows=st.map(s=>'<tr><td><b>'+esc(s.name)+'</b></td><td>'+esc(s.role)+'</td><td>'+esc(s.mobile)+'</td><td><button class="link" data-act="editstaff" data-id="'+s.id+'">Edit</button></td></tr>').join('');
+ const lv=S.leave.slice().sort((a,b)=>b.from.localeCompare(a.from)).map(l=>'<tr><td>'+esc(l.staff)+'</td><td>'+fmtD(l.from)+(l.to&&l.to!==l.from?' to '+fmtD(l.to):'')+'</td><td>'+esc(l.type)+'</td><td><button class="link" data-act="editleave" data-id="'+l.id+'">Edit</button></td></tr>').join('');
+ return topbar('Staff & roster','Week of '+fmtD(ws),'<button class="btn sm ghost" data-act="week" data-n="-7">&lsaquo; Week</button><button class="btn sm ghost" data-act="today">Today</button><button class="btn sm ghost" data-act="week" data-n="7">Week &rsaquo;</button>'+tbtn('+ Staff','newstaff','','sm')+tbtn('+ Leave','newleave','','sm ghost'))
+ +'<section class="glass rc"><h3>Weekly roster</h3><div class="tw">'+ro+'</div><p class="hint" style="margin-top:8px">Shows boat trips, non-dive duties and training. Edit trips on the Day board.</p></section>'
+ +'<div class="hgrid"><section class="glass rc"><h3>Staff</h3>'+(rows?'<div class="tw"><table><thead><tr><th>Name</th><th>Role</th><th>Mobile</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No staff yet. Add your first one.</div>')+'</section>'
+ +'<section class="glass rc"><h3>Leave</h3>'+(lv?'<div class="tw"><table><thead><tr><th>Staff</th><th>Dates</th><th>Type</th><th></th></tr></thead><tbody>'+lv+'</tbody></table></div>':'<div class="empty">No leave recorded.</div>')+'</section></div>';
+}
+
+/* ===== equipment ===== */
+function viewEquipment(){
+ const T=todayS();const d=UI.date;const N=needsFor(d);
+ const rows=S.assets.slice().sort((a,b)=>(a.type+a.size).localeCompare(b.type+b.size)).map(a=>{
+  let fl='';
+  if(a.next){const dd=Math.round((pd(a.next)-pd(T))/864e5);fl=dd<0?'<span class="pill n">Overdue '+(-dd)+' d</span>':dd<=30?'<span class="pill w">Due in '+dd+' d</span>':'<span class="pill y">OK</span>'}
+  return '<tr><td>'+esc(a.type)+'</td><td><b>'+esc(a.size)+'</b></td><td>'+esc(a.qty)+'</td><td>'+(a.status==='OK'?'<span class="pill y">OK</span>':'<span class="pill w">'+esc(a.status)+'</span>')+'</td><td>'+esc(a.last)+'</td><td>'+esc(a.next)+' '+fl+'</td><td>'+esc(a.loc)+'</td><td><button class="link" data-act="editasset" data-id="'+a.id+'">Edit</button></td></tr>'}).join('');
+ const sh=N.short.length?N.short.map(s=>'<div class="li"><div><b>'+esc(s.type)+(s.size?' '+esc(s.size):'')+'</b><span class="sm2">'+(s.none?'No stock rows for this type, add stock':'Need '+s.need+', stock '+s.stock)+'</span></div>'+(s.none?'<span class="pill w">add stock</span>':'<span class="pill n">short '+(s.need-s.stock)+'</span>')+'</div>').join(''):'<p class="okline">Stock covers the needs for this day.</p>';
+ return topbar('Equipment','Stock and service','<input type="date" id="dayPick" value="'+d+'" aria-label="Date for shortages">'+tbtn('+ Stock item','newasset','','sm'))
+ +'<div class="board"><section class="glass rc"><h3>Stock</h3>'+(rows?'<div class="tw"><table><thead><tr><th>Type</th><th>Size / name</th><th>Qty</th><th>Status</th><th>Last service</th><th>Next due</th><th>Location</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty">No stock listed yet. Add tanks, BCDs, wetsuits and regulators.</div>')+'</section>'
+ +'<section class="glass rc"><h3>Shortages for '+fmtD(d)+'</h3>'+sh+'</section></div>';
+}
+
+/* ===== setup ===== */
+const LISTDEF=[['diveActs','Dive activity codes'],['tanks','Tank / gas types (first = standard)'],['bcd','BCD sizes'],['wet','Wetsuit sizes'],['boots','Boot sizes'],['fins','Fin sizes'],['snacks','Sandwich / lunch types'],['sites','Dive sites'],['certs','Certifications'],['tripTypes','Trip types'],['activities','Trip activities'],['trainActs','Training activities'],['offices','Offices'],['duties','Non-dive duties'],['roles','Staff roles'],['colours','Team colours'],['assetTypes','Stock types']];
+function viewSetup(){
+ const L=S.lists;
+ const br=L.boats.map((b,i)=>'<tr><td><input data-bf="name" data-bi="'+i+'" value="'+esc(b.name)+'" aria-label="Boat name" style="width:150px"></td><td><input data-bf="reg" data-bi="'+i+'" value="'+esc(b.reg)+'" aria-label="Registration" style="width:80px"></td><td><input type="number" min="0" data-bf="seats" data-bi="'+i+'" value="'+b.seats+'" aria-label="Guest seats" style="width:70px"></td><td><input type="number" min="0" data-bf="crew" data-bi="'+i+'" value="'+b.crew+'" aria-label="Crew seats" style="width:70px"></td><td><select data-bf="colour" data-bi="'+i+'" aria-label="Team colour">'+opts(L.colours,b.colour)+'</select></td><td><select data-bf="size" data-bi="'+i+'" aria-label="Category">'+opts(['Big Boat','Small Boat'],b.size,1)+'</select></td><td><button class="link" data-act="delboat" data-i="'+i+'">Remove</button></td></tr>').join('');
+ const ls=LISTDEF.map(x=>'<label class="f">'+x[1]+'<textarea data-list="'+x[0]+'" rows="5">'+esc(L[x[0]].join('\n'))+'</textarea></label>').join('');
+ const hasDemo=['staff','leave','trips','guests','sessions','duties','assets'].some(c=>S[c].some(r=>r.demo));
+ const lg=S.log.slice(-40).reverse().map(l=>'<div class="li"><div>'+esc(l.m)+'<span class="sm2">'+esc(l.who||'unnamed')+'</span></div><span class="sm2">'+new Date(l.t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})+'</span></div>').join('')||'<p class="hint">Nothing logged yet.</p>';
+ return topbar('Setup','Boats, lists and backups','')
+ +'<section class="glass rc"><h3>Boats <button class="btn sm ghost" data-act="addboat">+ Boat</button></h3><div class="tw"><table><thead><tr><th>Name</th><th>Reg.</th><th>Guest seats</th><th>Crew seats</th><th>Team colour</th><th>Category</th><th></th></tr></thead><tbody>'+br+'</tbody></table></div><p class="hint" style="margin-top:8px">Crew seats exclude the captain (same as the manifest). Category is set per boat; "Big boat" was assumed for 12+ guest seats, change it here if your team sees it differently. Renaming a boat updates its trips.</p>'
+ +'<div class="row" style="margin-top:12px"><label class="f" style="max-width:220px">Spare tanks per boat with divers<input type="number" min="0" id="spT" value="'+L.spareTanks+'"></label><label class="f" style="max-width:220px">Spare regulators per boat<input type="number" min="0" id="spR" value="'+L.spareRegs+'"></label></div></section>'
+ +'<section class="glass rc"><h3>Backup</h3><p class="hint" style="margin-bottom:10px">Everything is stored in this browser on this computer. Save a backup file regularly.</p><div class="acts">'+tbtn('Save full backup','backup','','sm')+tbtn('Load a backup','loadbackup','','sm ghost')+(hasDemo?tbtn('Remove demo data','rmdemo','','sm ghost'):'')+tbtn('Reset everything','reset','','sm danger')+'</div></section>'
+ +'<section class="glass rc"><h3>Lists</h3><p class="hint" style="margin-bottom:10px">One entry per line. These fill the drop-downs and suggestions.</p><div class="grid3">'+ls+'</div></section>'
+ +'<section class="glass rc"><h3>Change log</h3>'+lg+'</section>';
+}
+const VIEWS={board:viewBoard,bookings:viewBookings,staff:viewStaff,equipment:viewEquipment,handover:viewHandover,setup:viewSetup};
+
+/* ===== downloads and CSV ===== */
+function download(name,text,mime){
+ const b=new Blob([text],{type:mime||'text/plain'});const a=document.createElement('a');
+ a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();
+ setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+}
+const csvc=v=>{v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+const csvRow=a=>a.map(csvc).join(',');
+function csvTrips(){
+ const ws=weekStart(UI.date);const r=[csvRow(['Date','Slot','Boat','Reg','Trip type','Activity','Site 1','Site 2','Colour','Captain','Guide 1','Guide 2','Guide 3','Deck','Guests','Seats','Notes'])];
+ S.trips.filter(t=>t.date>=ws&&t.date<=addD(ws,6)).sort((a,b)=>(a.date+a.slot).localeCompare(b.date+b.slot)).forEach(t=>{const b=boatOf(t.boat)||{};r.push(csvRow([t.date,t.slot,t.boat,b.reg,t.tripType,t.activity,t.site1,t.site2,t.colour,t.captain,t.g1,t.g2,t.g3,t.deck,guestsOf(t.id).length,b.seats,t.notes]))});
+ download('trips_week_'+ws+'.csv','﻿'+r.join('\r\n'),'text/csv');
+}
+function csvBook(){
+ const r=[csvRow(['Date','Slot','Boat','Customer','Contact','Nationality','Cert','Dive 1','Dive 2','Tank','Snack','Cost','Invoice','Booked by','Booked on','Office','ID copy','Form','Here','Notes'])];
+ bkRows().forEach(x=>{const g=x.g;r.push(csvRow([x.t.date,x.t.slot,x.t.boat,g.name,g.phone,g.nat,g.cert,g.act1,g.act2,g.tank,g.snack,g.cost,g.inv,g.bookedBy,g.bookedOn,g.office,g.idCopy?'Y':'N',g.form?'Y':'N',g.checkedIn?'Y':'N',g.notes]))});
+ download('bookings_'+UI.date+'.csv','﻿'+r.join('\r\n'),'text/csv');
+}
+
+/* ===== print ===== */
+function printNow(html,orient){
+ $('#printArea').innerHTML=html;
+ let st=$('#pageStyle');if(!st){st=document.createElement('style');st.id='pageStyle';document.head.appendChild(st)}
+ st.textContent='@page{size:A4 '+orient+';margin:8mm}';
+ setTimeout(()=>window.print(),60);
+}
+function manifestHTML(t){
+ const b=boatOf(t.boat)||{};const gs=guestsOf(t.id);const L=S.lists;
+ const cap=staffByName(t.captain);
+ const col=(t.colour||b.colour||'');
+ const label=esc(t.boat||'')+(b.reg?', '+esc(b.reg):'')+(b.seats!==undefined&&boatOf(t.boat)?' ('+b.seats+'+'+b.crew+')':'')+(col?' '+esc(col.charAt(0)):'');
+ const n=Math.max(18,gs.length);
+ const ck=v=>v?'&#10003;':'';
+ let rows='';
+ for(let i=0;i<n;i++){
+  const g=gs[i];
+  rows+=g?'<tr class="r"><td class="c">'+(i+1)+'</td><td>'+esc(g.name)+'</td><td>'+esc(g.nat)+'</td><td>'+esc(g.cert)+'</td><td>'+esc(g.tank)+'</td><td>'+esc(g.act1)+'</td><td class="c">'+ck(g.rc1)+'</td><td>'+esc(g.act2)+'</td><td class="c">'+ck(g.rc2)+'</td><td>'+esc(g.snack)+'</td><td class="c">'+(g.reg?'Y':'')+'</td><td class="c">'+ck(g.idCopy)+'</td><td class="c">'+ck(g.form)+'</td></tr>'
+  :'<tr class="r"><td class="c">'+(i+1)+'</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+ }
+ const d1=gs.filter(g=>g.act1).length,d2=gs.filter(g=>g.act2).length;
+ const guides=[t.g1,t.g2,t.g3].filter(Boolean);
+ const crew=guides.length+(t.deck?1:0);
+ const gmap={};
+ gs.forEach(g=>{const k=g.guide||'Unassigned';gmap[k]=gmap[k]||{n:0,a:{}};gmap[k].n++;if(g.act1)gmap[k].a[g.act1]=(gmap[k].a[g.act1]||0)+1});
+ const crewRows=Object.keys(gmap).map(k=>'<tr><td>'+esc(k)+'</td><td class="c">'+gmap[k].n+'</td><td>'+Object.keys(gmap[k].a).map(a=>esc(a)+' x'+gmap[k].a[a]).join(', ')+'</td></tr>').join('');
+ const sm={};gs.forEach(g=>{if(g.snack)sm[g.snack]=(sm[g.snack]||0)+1});
+ const smRows=Object.keys(sm).map(k=>'<tr><td>'+esc(k)+'</td><td class="c">'+sm[k]+'</td></tr>').join('');
+ const smTot=gs.filter(g=>g.snack).length;
+ const rentals=gs.filter(g=>g.reg).length;const spare=gs.length&&d1+d2?num(L.spareRegs):0;
+ const data=['Site (if changed)','Time in','Time out','Visibility','Temp','Max depth','Duration','Notes'];
+ const dataBlock=(ttl)=>'<table class="nb"><tr><th colspan="2">'+ttl+'</th></tr>'+data.map(x=>'<tr><td style="width:34%">'+x+'</td><td style="height:5.4mm"></td></tr>').join('')+'</table>';
+ return '<div class="pm"><h1>BOAT MANIFEST</h1>'
+ +'<table style="margin-bottom:3mm"><tr><th style="width:12%">Date</th><td style="width:30%">'+fmtL(t.date)+' ('+SLOTN[t.slot]+')</td><th style="width:12%">Boat</th><td>'+label+'</td></tr>'
+ +'<tr><th>Captain</th><td>'+esc(t.captain||'')+(cap&&cap.mobile?' &nbsp; '+esc(cap.mobile):'')+'</td><th>Team</th><td>'+esc(col)+'</td></tr>'
+ +'<tr><th>Activity</th><td>'+esc(t.activity)+' &middot; '+esc(t.tripType)+'</td><th>Sites</th><td>'+esc([t.site1,t.site2].filter(Boolean).join(' / '))+'</td></tr>'
+ +(t.notes?'<tr><th>Notes</th><td colspan="3">'+esc(t.notes)+'</td></tr>':'')+'</table>'
+ +'<table style="table-layout:fixed"><colgroup><col style="width:5mm"><col style="width:38mm"><col style="width:14mm"><col style="width:12mm"><col style="width:14mm"><col style="width:20mm"><col style="width:9mm"><col style="width:20mm"><col style="width:9mm"><col style="width:17mm"><col style="width:9mm"><col style="width:9mm"><col style="width:10mm"></colgroup>'
+ +'<thead><tr><th>#</th><th>Customer name</th><th>Nat.</th><th>Cert</th><th>Gas</th><th>Dive 1</th><th>RC 1</th><th>Dive 2</th><th>RC 2</th><th>Sandwich</th><th>Rental reg</th><th>ID</th><th>Form</th></tr></thead><tbody>'+rows+'</tbody></table>'
+ +'<div class="blk nb"><div><table><tr><th>PAX Dive 1</th><td class="c">'+d1+'</td><th>PAX Dive 2</th><td class="c">'+d2+'</td></tr><tr><th>Customers</th><td class="c">'+gs.length+'</td><th>Crew (excl. Captain)</th><td class="c">'+crew+'</td></tr><tr><th colspan="3">Persons on board (excl. Captain)</th><td class="c"><b>'+(gs.length+crew)+'</b></td></tr></table>'
+ +'<table style="margin-top:2mm"><tr><th>Guide / crew</th><th>Guests</th><th>Dive 1 activities</th></tr>'+(guides.concat(t.deck?[t.deck]:[]).map(c=>'<tr><td>'+esc(c)+'</td><td class="c">'+(gmap[c]?gmap[c].n:0)+'</td><td>'+(gmap[c]?Object.keys(gmap[c].a).map(a=>esc(a)+' x'+gmap[c].a[a]).join(', '):'')+'</td></tr>').join(''))+(gmap['Unassigned']?'<tr><td>Unassigned</td><td class="c">'+gmap['Unassigned'].n+'</td><td></td></tr>':'')+'</table></div>'
+ +'<div><table><tr><th>Sandwich</th><th>Qty</th></tr>'+(smRows||'<tr><td colspan="2">&nbsp;</td></tr>')+'<tr><th>Total</th><td class="c"><b>'+smTot+'</b></td></tr></table>'
+ +'<table style="margin-top:2mm"><tr><th>Rental regs</th><td class="c">'+rentals+'</td><th>Spare</th><td class="c">'+spare+'</td><th>Total</th><td class="c"><b>'+(rentals+spare)+'</b></td></tr><tr><th colspan="3">Spare tank(s)</th><td class="c" colspan="3">'+(d1+d2?num(L.spareTanks):0)+' x 12ltr</td></tr></table>'
+ +'<table style="margin-top:2mm"><tr><th>Roll call after dive 1 signed</th><td class="ln"></td></tr><tr><th>Roll call after dive 2 signed</th><td class="ln"></td></tr></table></div></div>'
+ +'<div class="blk nb">'+dataBlock('DIVE ONE')+dataBlock('DIVE TWO')+'</div></div>';
+}
+function dayPlanHTML(d){
+ const L=S.lists;let h='<div class="pm dayplan"><h1>Day plan &middot; '+fmtL(d)+'</h1>';
+ SLOTS.forEach(sl=>{
+  const ts=tripsAt(d,sl);if(!ts.length)return;
+  h+='<h3 style="margin:6px 0 3px">'+SLOTN[sl]+'</h3><table><tr><th>Boat</th><th>Reg</th><th>Captain</th><th>Guides</th><th>Deck</th><th>Activity</th><th>Sites</th><th>Guests / seats</th><th>Notes</th></tr>';
+  ts.forEach(t=>{const b=boatOf(t.boat)||{};h+='<tr><td>'+esc(t.boat)+(t.colour?' ('+esc(t.colour.charAt(0))+')':'')+'</td><td>'+esc(b.reg)+'</td><td>'+esc(t.captain)+'</td><td>'+esc([t.g1,t.g2,t.g3].filter(Boolean).join(', '))+'</td><td>'+esc(t.deck)+'</td><td>'+esc(t.activity)+' '+esc(t.tripType)+'</td><td>'+esc([t.site1,t.site2].filter(Boolean).join(' / '))+'</td><td class="c">'+guestsOf(t.id).length+' / '+(b.seats||'')+'</td><td>'+esc(t.notes)+'</td></tr>'});
+  h+='</table>';
+ });
+ const du=L.duties.map(n=>{const r=byId('duties',d+'|'+n);return r&&(r.s1||r.s2)?'<tr><td>'+esc(n)+'</td><td>'+esc([r.s1,r.s2].filter(Boolean).join(', '))+'</td></tr>':''}).join('');
+ if(du)h+='<h3 style="margin:6px 0 3px">Non-dive duties</h3><table style="width:50%">'+du+'</table>';
+ const ss=S.sessions.filter(s=>s.date===d);
+ if(ss.length)h+='<h3 style="margin:6px 0 3px">Training and pool</h3><table><tr><th>Time</th><th>Customer</th><th>Activity</th><th>Instructor</th><th>Inv #</th></tr>'+ss.map(s=>'<tr><td>'+esc(s.time)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.activity)+'</td><td>'+esc(s.staff)+'</td><td>'+esc(s.inv)+'</td></tr>').join('')+'</table>';
+ const N=needsFor(d);const kv=m=>Object.keys(m).sort().map(k=>(k||'')+' x'+m[k]).join(', ');
+ h+='<h3 style="margin:6px 0 3px">Prepare</h3><table><tr><th style="width:18%">Tanks</th><td>'+esc(kv(N.tanks))+'</td></tr><tr><th>BCD</th><td>'+esc(kv(N.bcd))+'</td></tr><tr><th>Wetsuits</th><td>'+esc(kv(N.wet))+'</td></tr><tr><th>Boots / fins</th><td>'+esc(kv(N.boots))+' / '+esc(kv(N.fins))+'</td></tr><tr><th>Other</th><td>Regs '+N.regsTotal+' · masks '+N.masks+' · towels '+N.tw+' · bus '+N.bus+' · lunches '+(N.lunchBoat+N.lunchTrain)+'</td></tr></table></div>';
+ return h;
+}
+
+/* ===== handover: export, preview, merge ===== */
+const HO_APP='divedesk-handover';
+function exportHandover(from){
+ const trips=S.trips.filter(t=>t.date>=from);const ids={};trips.forEach(t=>ids[t.id]=1);
+ const data={lists:S.lists,staff:S.staff,assets:S.assets,leave:S.leave.filter(l=>(l.to||l.from)>=from),trips:trips,
+  guests:S.guests.filter(g=>ids[g.trip]),sessions:S.sessions.filter(s=>s.date>=from),duties:S.duties.filter(d=>d.date>=from),tomb:S.tomb};
+ const p={app:HO_APP,v:4,from:from,exported:nowTs(),by:S.me||'',data:data};
+ download('DiveDesk_handover_'+from+(S.me?'_'+S.me.replace(/[^\w-]+/g,'_'):'')+'.json',JSON.stringify(p),'application/json');
+ S.lastExport=nowTs();logIt('Handover exported from '+from);save();renderBk();
+}
+function recLabel(c,r){
+ if(c==='trips')return fmtD(r.date)+' '+r.slot+' · '+(r.boat||'no boat');
+ if(c==='guests'){const t=byId('trips',r.trip);return (r.name||'(no name)')+(t?' · '+short(t.boat)+' '+fmtD(t.date):'')}
+ if(c==='sessions')return (r.name||'(no name)')+' · training '+fmtD(r.date);
+ if(c==='staff')return r.name;
+ if(c==='leave')return r.staff+' · leave '+fmtD(r.from);
+ if(c==='duties')return r.duty+' · '+fmtD(r.date);
+ if(c==='assets')return r.type+' '+(r.size||'');
+ return r.id;
+}
+const CN={trips:'Trip',guests:'Guest',sessions:'Training',staff:'Staff',leave:'Leave',duties:'Duty',assets:'Stock'};
+function diffRec(a,b){
+ const out=[];const keys={};Object.keys(a).concat(Object.keys(b)).forEach(k=>keys[k]=1);
+ Object.keys(keys).forEach(k=>{if(k==='u'||k==='id'||k==='demo')return;if(JSON.stringify(a[k])!==JSON.stringify(b[k]))out.push(k+': '+(a[k]===undefined||a[k]===''?'(empty)':a[k])+' → '+(b[k]===undefined||b[k]===''?'(empty)':b[k]))});
+ return out;
+}
+function makePlan(p){
+ const plan={items:[],c:{new:0,upd:0,keep:0,del:0},by:p.by||'',from:p.from||'',exported:p.exported||0,payload:p};
+ const D=p.data||{};
+ COLL.forEach(c=>{
+  (Array.isArray(D[c])?D[c]:[]).forEach(r=>{
+   if(!r||!r.id)return;
+   const mine=byId(c,r.id);const ru=r.u||0;
+   if(!mine){
+    if((S.tomb[r.id]||0)>=ru&&S.tomb[r.id]){plan.items.push({c,id:r.id,kind:'keep',label:recLabel(c,r),note:'You deleted this and your deletion is newer'});plan.c.keep++}
+    else{plan.items.push({c,id:r.id,kind:'new',rec:r,label:recLabel(c,r)});plan.c.new++}
+   }else if(ru>(mine.u||0)){
+    const df=diffRec(mine,r);
+    if(df.length){plan.items.push({c,id:r.id,kind:'upd',rec:r,label:recLabel(c,r),note:df.slice(0,6).join(' · ')+(df.length>6?' · +'+(df.length-6)+' more':'')});plan.c.upd++}
+   }else if(ru<(mine.u||0)){
+    const df=diffRec(mine,r);
+    if(df.length){plan.items.push({c,id:r.id,kind:'keep',label:recLabel(c,r),note:'Your version is newer, kept ('+df.slice(0,3).join(' · ')+')'});plan.c.keep++}
+   }
+  });
+ });
+ const T=D.tomb||{};
+ Object.keys(T).forEach(id=>{
+  COLL.forEach(c=>{
+   const mine=byId(c,id);
+   if(mine&&T[id]>(mine.u||0)){plan.items.push({c,id,kind:'del',ts:T[id],label:recLabel(c,mine),note:'Deleted on their side'});plan.c.del++}
+  });
+ });
+ return plan;
+}
+function applyPlan(plan){
+ const D=plan.payload.data||{};let n=0;
+ plan.items.forEach(it=>{
+  if(it.kind==='new'||it.kind==='upd'){
+   const rec=JSON.parse(JSON.stringify(it.rec));
+   if(it.c==='trips')Object.assign(rec,Object.assign({},TRIP_DEF,rec));
+   if(it.c==='guests')Object.assign(rec,Object.assign({},GUEST_DEF,rec));
+   if(it.c==='sessions')Object.assign(rec,Object.assign({},SESS_DEF,rec));
+   const i=S[it.c].findIndex(r=>r.id===it.id);
+   if(i<0)S[it.c].push(rec);else S[it.c][i]=rec;
+   delete S.tomb[it.id];n++;
+  }else if(it.kind==='del'){
+   const i=S[it.c].findIndex(r=>r.id===it.id);if(i>=0)S[it.c].splice(i,1);
+   S.tomb[it.id]=it.ts;n++;
+  }
+ });
+ const T=D.tomb||{};Object.keys(T).forEach(id=>{if(!COLL.some(c=>byId(c,id))&&(S.tomb[id]||0)<T[id])S.tomb[id]=T[id]});
+ const RL=D.lists||{};
+ Object.keys(RL).forEach(k=>{
+  if(k==='boats'&&Array.isArray(RL.boats)){RL.boats.forEach(b=>{if(b&&b.name&&!boatOf(b.name))S.lists.boats.push({name:String(b.name),reg:String(b.reg||''),seats:num(b.seats),crew:num(b.crew),colour:b.colour||'',size:b.size==='Big Boat'?'Big Boat':'Small Boat'})})}
+  else if(Array.isArray(RL[k])&&Array.isArray(S.lists[k])){RL[k].forEach(x=>{x=String(x);if(S.lists[k].indexOf(x)<0)S.lists[k].push(x)})}
+ });
+ S.lastImport=nowTs();
+ logIt('Handover from '+(plan.by||'unnamed')+' applied: '+plan.c.new+' new, '+plan.c.upd+' updated, '+plan.c.del+' deleted');
+ save();return n;
+}
+function viewHandover(){
+ const pl=UI.hoPlan;const from=UI.hoFrom||todayS();
+ const when=t=>t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'never';
+ let prev='';
+ if(pl){
+  const K={new:['New','ch-new'],upd:['Updated by them','ch-upd'],keep:['Your newer kept','ch-keep'],del:['Deleted by them','ch-del']};
+  const order={upd:0,new:1,del:2,keep:3};
+  const items=pl.items.slice().sort((a,b)=>order[a.kind]-order[b.kind]);
+  const nChange=pl.c.new+pl.c.upd+pl.c.del;
+  prev='<div class="box" style="margin-top:12px"><h3>Preview: file from '+esc(pl.by||'unnamed')+', exported '+when(pl.exported)+'</h3><div class="plan-sum">'
+  +Object.keys(K).map(k=>'<span class="pc '+K[k][1]+'"><b>'+pl.c[k]+'</b> '+K[k][0].toLowerCase()+'</span>').join('')+'</div>'
+  +(items.length?'<div class="hl">'+items.slice(0,300).map(it=>'<div class="li"><div><b>'+esc(CN[it.c])+': '+esc(it.label)+'</b>'+(it.note?'<span class="sm2">'+esc(it.note)+'</span>':'')+'</div><span class="pill '+({new:'y',upd:'w',keep:'w',del:'n'}[it.kind])+'">'+K[it.kind][0]+'</span></div>').join('')+(items.length>300?'<div class="li">+'+(items.length-300)+' more not shown</div>':'')+'</div>':'<p class="okline">Nothing to merge, you already have everything in this file.</p>')
+  +'<div class="acts" style="margin-top:12px">'+tbtn('Apply '+nChange+' change'+(nChange===1?'':'s'),'hoapply','','sm'+(nChange?'':'" disabled="disabled'))+tbtn('Cancel','hocancel','','sm ghost')+'</div></div>';
+ }
+ return topbar('Handover','Office and dive center','')
+ +'<div class="hgrid"><section class="glass rc"><h3>1. Send your changes</h3><p class="hint" style="margin-bottom:12px">Creates one small file with your trips, guests, duties, staff and stock. Email it or send it by WhatsApp. The other side imports it in step 2.</p><div class="row"><label class="f" style="max-width:220px">Include trips from<input type="date" id="hoFrom" value="'+esc(from)+'"></label>'+tbtn('Export handover file','hoexport','','')+'</div><p class="hint" style="margin-top:10px">Last exported: '+when(S.lastExport)+'</p></section>'
+ +'<section class="glass rc"><h3>2. Receive changes</h3><p class="hint" style="margin-bottom:12px">Pick the file you were sent. You see what is new, changed or deleted before anything is applied. If the same record changed on both sides, the newest edit wins.</p>'+tbtn('Choose handover file','hopick','','ghost')+'<p class="hint" style="margin-top:10px">Last imported: '+when(S.lastImport)+'</p>'+prev+'</section></div>'
+ +'<section class="glass rc"><h3>How this works, and what it is not</h3><p class="hint">This replaces the emailed Excel with a merge: only changed records move, and nothing is overwritten without a preview. It is <b>not live sync</b>. Each computer holds its own copy and you swap files. "Newest edit" uses each computer\'s clock, so keep both computers\' time correct. If two people edit the same record before swapping, the later edit wins and the other is shown as "Your newer kept" or "Updated by them" in the preview. Live shared editing needs a hosted version, which can come later.</p></section>';
+}
+
+/* ===== events and init ===== */
+let toastT=null;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200)}
+function after(){save();if(UI.tripId)refreshPanel();else render()}
+function renameStaff(o,n){
+ const t=nowTs();
+ S.trips.forEach(x=>{let ch=0;['captain','g1','g2','g3','deck'].forEach(f=>{if(x[f]===o){x[f]=n;ch=1}});if(ch)x.u=t});
+ S.guests.forEach(x=>{if(x.guide===o){x.guide=n;x.u=t}});
+ S.sessions.forEach(x=>{if(x.staff===o){x.staff=n;x.u=t}});
+ S.leave.forEach(x=>{if(x.staff===o){x.staff=n;x.u=t}});
+ S.duties.forEach(x=>{let ch=0;['s1','s2'].forEach(f=>{if(x[f]===o){x[f]=n;ch=1}});if(ch)x.u=t});
+}
+function newId(c){return uid(c[0])}
+function dupTrip(id){
+ const t=byId('trips',id);if(!t)return;
+ const n=Object.assign({},t,{id:newId('trips'),notes:t.notes});delete n.demo;put('trips',n);
+ guestsOf(id).forEach(g=>{const c=Object.assign({},g,{id:newId('guests'),trip:n.id,checkedIn:false,rc1:false,rc2:false});delete c.demo;put('guests',c)});
+ logIt('Trip duplicated: '+n.boat);save();openTrip(n.id,'closepanel');render();
+}
+function openRecModal(k,id,isNew,pre){
+ const c=COLLOF[k];let rec;
+ if(isNew){rec=Object.assign({id:newId(c)},{guest:GUEST_DEF,sess:SESS_DEF,staff:{name:'',role:'',mobile:''},leave:{staff:'',from:UI.date,to:UI.date,type:'Leave'},asset:{type:'Tank',size:'',qty:1,status:'OK',last:'',next:'',loc:'',notes:''}}[k],pre||{})}
+ else rec=Object.assign({},byId(c,id));
+ const names={guest:'guest',sess:'training session',staff:'staff member',leave:'leave',asset:'stock item'};
+ openModal(k,rec,(isNew?'Add ':'Edit ')+names[k],fieldsFor(k),{isNew:isNew,trip:pre&&pre.trip});
+}
+function saveModal(){
+ const M=UI.modal;if(!M)return;const c=COLLOF[M.k];const fs=fieldsFor(M.k);
+ const rec=collectForm(Object.assign({},M.rec),fs);
+ const bad=m=>{toast(m)};
+ if(M.k==='guest'&&!rec.name)return bad('Enter the customer name');
+ if(M.k==='sess'&&!rec.name)return bad('Enter the customer name');
+ if(M.k==='staff'&&!rec.name)return bad('Enter a name');
+ if(M.k==='staff'&&S.staff.some(s=>s.id!==rec.id&&s.name===rec.name))return bad('That name already exists');
+ if(M.k==='leave'&&(!rec.staff||!rec.from))return bad('Choose staff and a start date');
+ if(M.k==='leave'&&!rec.to)rec.to=rec.from;
+ if(M.k==='leave'&&rec.to<rec.from)return bad('End date is before the start date');
+ if(M.k==='asset'&&!rec.size&&rec.type!=='Regulator'&&rec.type!=='Mask/Snorkel')return bad('Enter a size or name');
+ if(M.k==='staff'&&!M.isNew){const old=byId('staff',rec.id);if(old&&old.name!==rec.name)renameStaff(old.name,rec.name)}
+ if(M.k==='guest'){if(M.trip)rec.trip=M.trip}
+ if(M.k==='sess'&&!rec.date)rec.date=UI.date;
+ put(c,rec);logIt((M.isNew?'Added ':'Edited ')+M.k+': '+(rec.name||rec.staff||rec.type||''));
+ closeModal();after();toast('Saved');
+}
+function toggleField(id,f){const g=byId('guests',id);if(!g)return;g[f]=!g[f];put('guests',g);save();refreshPanel()}
+function removeDemo(){
+ COLL.forEach(c=>{S[c]=S[c].filter(r=>!r.demo)});
+ const ids={};S.trips.forEach(t=>ids[t.id]=1);S.guests=S.guests.filter(g=>ids[g.trip]);
+ logIt('Demo data removed');save();render();toast('Demo data removed');
+}
+function readFile(f,mode){
+ const r=new FileReader();
+ r.onload=()=>{
+  let d;try{d=JSON.parse(r.result)}catch(e){toast('That file is not valid');return}
+  if(mode==='backup'){
+   if(d&&d.app===HO_APP){toast('That is a handover file. Use Handover instead.');return}
+   if(!d||d.v!==4||!Array.isArray(d.trips)){toast('That is not a DiveDesk backup');return}
+   if(!confirm('Replace everything on this computer with this backup?'))return;
+   S=normalize(d);save();render();toast('Backup loaded');
+  }else{
+   if(!d||d.app!==HO_APP||!d.data){toast('That is not a handover file');return}
+   UI.hoPlan=makePlan(d);UI.tab='handover';render();
+  }
+ };
+ r.readAsText(f);
+}
+let fileMode='handover';
+
+document.addEventListener('click',e=>{
+ const nb=e.target.closest('#nav button[data-t]');
+ if(nb){UI.tab=nb.dataset.t;render();window.scrollTo(0,0);return}
+ const el=e.target.closest('[data-act]');if(!el)return;
+ const a=el.dataset.act,id=el.dataset.id;
+ switch(a){
+  case 'pickday':UI.date=el.dataset.d;render();break;
+  case 'week':UI.date=addD(UI.date,+el.dataset.n);render();break;
+  case 'today':UI.date=todayS();render();break;
+  case 'newtrip':{
+   const t=put('trips',Object.assign({},TRIP_DEF,{id:newId('trips'),date:UI.date,slot:el.dataset.slot||'AM'}));
+   logIt('Trip added '+fmtD(t.date));save();render();openTrip(t.id);const b=$('#panel [data-f=boat]');if(b)b.focus();break}
+  case 'opentrip':openTrip(id);break;
+  case 'closepanel':closePanel();break;
+  case 'duptrip':dupTrip(id);toast('Trip duplicated');break;
+  case 'deltrip':{
+   const t=byId('trips',id);if(!t)break;const n=guestsOf(id).length;
+   if(!confirm('Delete '+(t.boat||'this trip')+(n?' and its '+n+' guests':'')+'?'))break;
+   guestsOf(id).forEach(g=>del('guests',g.id));del('trips',id);logIt('Trip deleted '+t.boat+' '+t.date);save();closePanel();toast('Trip deleted');break}
+  case 'printman':{const t=byId('trips',id);if(t)printNow(manifestHTML(t),'portrait');break}
+  case 'printday':printNow(dayPlanHTML(UI.date),'landscape');break;
+  case 'copyday':{
+   const src=tripsOn(el.dataset.d);
+   src.forEach(t=>{const n=Object.assign({},t,{id:newId('trips'),date:UI.date});delete n.demo;put('trips',n)});
+   logIt('Copied '+src.length+' trips from '+el.dataset.d);save();render();toast(src.length?src.length+' trips copied (no guests)':'No trips to copy');break}
+  case 'gomissing':UI.tab='bookings';UI.filter='docs';UI.scope='day';render();break;
+  case 'tog':toggleField(id,el.dataset.f);break;
+  case 'newguest':openRecModal('guest',null,true,{trip:el.dataset.trip});break;
+  case 'editguest':openRecModal('guest',id,false);break;
+  case 'newsess':openRecModal('sess',null,true,{date:UI.date});break;
+  case 'editsess':openRecModal('sess',id,false);break;
+  case 'newstaff':openRecModal('staff',null,true);break;
+  case 'editstaff':openRecModal('staff',id,false);break;
+  case 'newleave':openRecModal('leave',null,true);break;
+  case 'editleave':openRecModal('leave',id,false);break;
+  case 'newasset':openRecModal('asset',null,true);break;
+  case 'editasset':openRecModal('asset',id,false);break;
+  case 'savemodal':saveModal();break;
+  case 'closemodal':closeModal();break;
+  case 'delmodal':{
+   const M=UI.modal;if(!M||!confirm('Delete this '+M.k+'?'))break;
+   del(COLLOF[M.k],M.id);logIt('Deleted '+M.k);closeModal();after();toast('Deleted');break}
+  case 'invcode':{const i=$('#m_inv');if(i){i.value=el.dataset.v;i.focus()}break}
+  case 'scope':UI.scope=el.dataset.v;render();break;
+  case 'filter':UI.filter=el.dataset.v;render();break;
+  case 'resetfilters':UI.q='';UI.filter='all';render();break;
+  case 'csvtrips':csvTrips();break;
+  case 'csvbook':csvBook();break;
+  case 'addboat':S.lists.boats.push({name:'New boat '+(S.lists.boats.length+1),reg:'',seats:6,crew:1,colour:'',size:'Small Boat'});save();render();break;
+  case 'delboat':{const b=S.lists.boats[+el.dataset.i];if(!b||!confirm('Remove '+b.name+' from the list? Existing trips keep the name but lose seat limits.'))break;S.lists.boats.splice(+el.dataset.i,1);save();render();break}
+  case 'backup':S.lastExport=nowTs();save();download('DiveDesk_backup_'+todayS()+'.json',JSON.stringify(S),'application/json');renderBk();toast('Backup saved');break;
+  case 'loadbackup':fileMode='backup';$('#fileIn').value='';$('#fileIn').click();break;
+  case 'rmdemo':if(confirm('Remove all demo trips, guests, staff and stock?'))removeDemo();break;
+  case 'reset':if(confirm('Erase ALL data on this computer? Save a backup first if unsure.')){S=blank();save();render();toast('Everything erased')}break;
+  case 'hoexport':{const f=$('#hoFrom').value||todayS();UI.hoFrom=f;exportHandover(f);render();toast('Handover file saved');break}
+  case 'hopick':fileMode='handover';$('#fileIn').value='';$('#fileIn').click();break;
+  case 'hoapply':{if(!UI.hoPlan)break;const n=applyPlan(UI.hoPlan);UI.hoPlan=null;render();toast(n+' changes applied');break}
+  case 'hocancel':UI.hoPlan=null;render();break;
+  case 'hideqs':S.qsHide=true;save();render();break;
+ }
+});
+
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.id==='dayPick'){if(t.value){UI.date=t.value;render()}return}
+ if(t.id==='hoFrom'){UI.hoFrom=t.value;return}
+ if(t.id==='meName'){S.me=t.value.trim();save();return}
+ if(t.id==='fileIn'){if(t.files&&t.files[0])readFile(t.files[0],fileMode);return}
+ if(t.id==='spT'||t.id==='spR'){S.lists[t.id==='spT'?'spareTanks':'spareRegs']=Math.max(0,num(t.value));save();return}
+ if(t.dataset.k==='trips'){
+  const r=byId('trips',t.dataset.id);if(!r)return;const f=t.dataset.f;
+  r[f]=t.value;
+  if(f==='boat'){const b=boatOf(t.value);if(b&&b.colour&&!r.colour){r.colour=b.colour;const c=$('#panel [data-f=colour]');if(c)c.value=r.colour}}
+  put('trips',r);save();refreshPanel();return}
+ if(t.dataset.duty){
+  const d=UI.date,n=t.dataset.duty,id=d+'|'+n;
+  const r=Object.assign({id:id,date:d,duty:n,s1:'',s2:''},byId('duties',id));r[t.dataset.slot]=t.value;
+  if(r.s1&&r.s1===r.s2){toast('Same person chosen twice');}
+  put('duties',r);save();render();return}
+ if(t.dataset.bf!==undefined){
+  const i=+t.dataset.bi,f=t.dataset.bf,b=S.lists.boats[i];if(!b)return;
+  if(f==='name'){
+   const nv=t.value.trim();
+   if(!nv||S.lists.boats.some((x,j)=>j!==i&&x.name===nv)){toast(nv?'That boat name already exists':'Boat name cannot be empty');t.value=b.name;return}
+   const old=b.name;b.name=nv;const ts=nowTs();
+   S.trips.forEach(x=>{if(x.boat===old){x.boat=nv;x.u=ts}});
+  }else if(f==='seats'||f==='crew')b[f]=Math.max(0,num(t.value));
+  else b[f]=t.value;
+  save();return}
+ if(t.dataset.list){S.lists[t.dataset.list]=lines(t.value);save();buildDatalists();return}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id==='bkq'){UI.q=e.target.value;$('#bkTable').innerHTML=bkTable()}
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){
+  if($('#modal').classList.contains('open'))closeModal();
+  else if($('#panel').classList.contains('open'))closePanel();
+  return}
+ if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute&&e.target.getAttribute('role')==='button'&&e.target.dataset.act){e.preventDefault();e.target.click();return}
+ if(e.key==='Tab'){
+  const ov=$('#modal.open')||$('#panel.open');if(!ov)return;
+  const f=$$('button:not([disabled]),input:not([disabled]),select,textarea,[tabindex="0"]',ov).filter(x=>x.offsetParent!==null);
+  if(!f.length)return;const first=f[0],last=f[f.length-1];
+  if(!ov.contains(document.activeElement)){first.focus();e.preventDefault();return}
+  if(e.shiftKey&&document.activeElement===first){last.focus();e.preventDefault()}
+  else if(!e.shiftKey&&document.activeElement===last){first.focus();e.preventDefault()}
+ }
+});
+$('#panel').addEventListener('mousedown',e=>{if(e.target.id==='panel')closePanel()});
+$('#modal').addEventListener('mousedown',e=>{if(e.target.id==='modal')closeModal()});
+window.addEventListener('afterprint',()=>{$('#printArea').innerHTML=''});
+
+load();
+$('#meName').value=S.me||'';
+render();
+
+</script></body></html>
