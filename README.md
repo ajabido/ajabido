@@ -1,10 +1,11 @@
 # Hi, I'm Alexis 👋
 
-Wholesale and operations manager in Dubai. 13 years across wholesale, warehouse operations and marketing, and I build the simple tools my team needs.
+Operations and commercial manager in Dubai's **dive and watersports industry**. 13 years across wholesale, warehouse operations and marketing. I also build the simple tools my team uses every day.
 
 ## What I do
-- **Wholesale:** dealer relationships and AED/USD pricing for local and international customers
-- **Operations:** stock and warehouse work, plus vending machines across Dubai and Abu Dhabi
+- **Operations:** warehouse and inventory, distribution, and vending machines across Dubai and Abu Dhabi
+- **Commercial:** dealer and B2B accounts, AED/USD pricing for local and export customers
+- **Marketing:** social media content and reels, campaign visuals, and the yearly product price list and catalogue
 - **Systems:** turning spreadsheet-heavy work into simple tools
 
 ## Tools I've built
